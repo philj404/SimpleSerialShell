@@ -11,7 +11,7 @@
 //
 int showID(int argc=0, char**argv=NULL)
 {
-  shell.println(F( "Running " __FILE__ ", Built " __DATE__));
+  shell.println(F( "Running " __FILE__ ",\nBuilt " __DATE__));
 };
 
 
@@ -49,6 +49,15 @@ int setTogglePeriod(int argc, char **argv)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+int getTogglePeriod(int argc, char **argv)
+{
+  shell.print("LED toggle period is ");
+  shell.print(togglePeriod);
+  shell.println("ms");
+
+  return EXIT_SUCCESS;
+}
+////////////////////////////////////////////////////////////////////////////////
 void setup() {
   // put your setup code here, to run once:
 
@@ -66,7 +75,8 @@ void setup() {
   shell.attach(Serial);
   shell.addCommand(F("id?"), showID);
 
-  shell.addCommand(F("settoggleperiod"), setTogglePeriod);
+  shell.addCommand(F("setTogglePeriod"), setTogglePeriod);
+  shell.addCommand(F("getTogglePeriod"), getTogglePeriod);
 
   showID();
   Serial.println(F("Ready."));
