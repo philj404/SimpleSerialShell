@@ -1,0 +1,31 @@
+#######################################
+# Syntax Coloring Map For SimpleSerialShell
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+CommandFunction	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+addCommand	KEYWORD2
+attachToStream	KEYWORD2
+executeIfInput	KEYWORD2
+execute		KEYWORD2
+lastErrNo	KEYWORD2
+printHelp	KEYWORD2
+resetBuffer	KEYWORD2
+
+#######################################
+# Instances (KEYWORD2)
+#######################################
+shell		KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
