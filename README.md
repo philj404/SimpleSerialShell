@@ -27,15 +27,23 @@ setup()
   Serial.begin(9600);
 
   shell.attach(Serial);  // attach to any stream...
-  shell.addCommand(F("sayHello"),helloWorld);
+  ...
 }
  ```
+Name the command and add it to the shell:
+```cpp
+  ...
+  shell.addCommand(F("sayHello"),helloWorld);
+  ...
+```
 
 Check for input periodically:
 ```cpp
 loop()
 {
+  ...
   shell.executeIfInput();
+  ...
 }
  ```
 
@@ -43,8 +51,8 @@ loop()
 * **AdjustableBlink**
 -- lets you read and vary the blink rate of a Blink sketch.
 * **ArduinoTextInterface**
--- lets you read and write digital and analog values to Arduino pins.  Basically wrappers for analogRead(), analogWrite(), tone(), noTone() etc.
-It's enough to set and clear bits one at a time and see if you have an LED connected to the right pin.
+-- lets you read and write digital and analog values to Arduino pins.  Basically wrappers for setPinMode(), digitalRead(), digitalWrite(), analogRead(), analogWrite(), etc.
+It's incomplete, but enough to set and clear bits one at a time and see if you have an LED connected to the right pin.
 * **EchoCommand** -- "echo" example.  
 Sending "echo Hello World!" returns "Hello World!" on the serial monitor.
 * **IdentifyTheSketch** -- Example provides an "id?" query which reports the filename and build date of the sketch running.  
