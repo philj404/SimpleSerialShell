@@ -35,6 +35,7 @@ class SimpleSerialShell : public Stream {
     virtual int available();
     virtual int read();
     virtual int peek();
+    virtual void flush(); // esp32 needs an implementation
 
   private:
     Stream * shellConnection;
