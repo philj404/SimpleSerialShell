@@ -51,7 +51,7 @@ const char * reverseLookup(int aVal, const lookupVals entries[])
       break;
     }
   }
-  return entries[i].val;
+  return entries[i].name;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
