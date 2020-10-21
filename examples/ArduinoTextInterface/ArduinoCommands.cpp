@@ -95,8 +95,10 @@ int analogRead(int argc, char **argv)
 
   return badArgCount(argv[0]);
 }
+
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
-int _analogWrite(int argc, char **argv)
+int analogWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
@@ -115,6 +117,7 @@ int _analogWrite(int argc, char **argv)
 
   return badArgCount(argv[0]);
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 const lookupVals PROGMEM digLevels[] = {
@@ -167,6 +170,7 @@ int digitalRead(int argc, char **argv)
 }
 
 
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
 int doTone(int argc, char **argv)
 {
@@ -186,7 +190,9 @@ int doTone(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
+#endif
 
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
 int doNoTone(int argc, char **argv)
 {
@@ -199,7 +205,7 @@ int doNoTone(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 int addArduinoCommands(SimpleSerialShell & shell)
@@ -208,9 +214,12 @@ int addArduinoCommands(SimpleSerialShell & shell)
   shell.addCommand(F("digitalwrite"), digitalWrite);
   shell.addCommand(F("digitalread"), digitalRead);
   shell.addCommand(F("analogread"), analogRead);
-  shell.addCommand(F("analogwrite"), _analogWrite);
+
+#ifndef ARDUINO_ARCH_ESP32
+  shell.addCommand(F("analogwrite"), analogWrite);
   shell.addCommand(F("tone"), doTone);
   shell.addCommand(F("notone"), doNoTone);
+#endif
 
   return EXIT_SUCCESS;
 }
