@@ -246,6 +246,7 @@ int SimpleSerialShell::printHelp(int argc, char **argv)
     shell.println(aCmd->name);
     aCmd = aCmd->next;
   }
+  return 0;	// OK or "no errors"
 }
 
 ///////////////////////////////////////////////////////////////
