@@ -100,14 +100,14 @@ int analogWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (!digitalPinHasPWM(pin))
     {
       shell.print("pin ");
       shell.print(pin);
       shell.println(" does not look like an analog output");
     }
-    auto val = atoi(argv[2]);
+    int val = atoi(argv[2]);
 
     analogWrite(pin, val);
     return EXIT_SUCCESS;
