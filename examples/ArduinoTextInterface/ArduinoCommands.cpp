@@ -51,7 +51,7 @@ const char * reverseLookup(int aVal, const lookupVals entries[])
       break;
     }
   }
-  return entries[i].val;
+  return entries[i].name;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,19 +95,21 @@ int analogRead(int argc, char **argv)
 
   return badArgCount(argv[0]);
 }
+
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
 int analogWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (!digitalPinHasPWM(pin))
     {
       shell.print("pin ");
       shell.print(pin);
       shell.println(" does not look like an analog output");
     }
-    auto val = atoi(argv[2]);
+    int val = atoi(argv[2]);
 
     analogWrite(pin, val);
     return EXIT_SUCCESS;
@@ -115,6 +117,7 @@ int analogWrite(int argc, char **argv)
 
   return badArgCount(argv[0]);
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 const lookupVals PROGMEM digLevels[] = {
@@ -167,6 +170,7 @@ int digitalRead(int argc, char **argv)
 }
 
 
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
 int doTone(int argc, char **argv)
 {
@@ -186,7 +190,9 @@ int doTone(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
+#endif
 
+#ifndef ARDUINO_ARCH_ESP32
 ////////////////////////////////////////////////////////////////////////////////
 int doNoTone(int argc, char **argv)
 {
@@ -199,7 +205,7 @@ int doNoTone(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
-
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 int addArduinoCommands(SimpleSerialShell & shell)
@@ -208,9 +214,12 @@ int addArduinoCommands(SimpleSerialShell & shell)
   shell.addCommand(F("digitalwrite"), digitalWrite);
   shell.addCommand(F("digitalread"), digitalRead);
   shell.addCommand(F("analogread"), analogRead);
+
+#ifndef ARDUINO_ARCH_ESP32
   shell.addCommand(F("analogwrite"), analogWrite);
   shell.addCommand(F("tone"), doTone);
   shell.addCommand(F("notone"), doNoTone);
+#endif
 
   return EXIT_SUCCESS;
 }
