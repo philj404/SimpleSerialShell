@@ -96,7 +96,7 @@ int analogRead(int argc, char **argv)
   return badArgCount(argv[0]);
 }
 ////////////////////////////////////////////////////////////////////////////////
-int analogWrite(int argc, char **argv)
+int _analogWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
@@ -208,7 +208,7 @@ int addArduinoCommands(SimpleSerialShell & shell)
   shell.addCommand(F("digitalwrite"), digitalWrite);
   shell.addCommand(F("digitalread"), digitalRead);
   shell.addCommand(F("analogread"), analogRead);
-  shell.addCommand(F("analogwrite"), analogWrite);
+  shell.addCommand(F("analogwrite"), _analogWrite);
   shell.addCommand(F("tone"), doTone);
   shell.addCommand(F("notone"), doNoTone);
 
