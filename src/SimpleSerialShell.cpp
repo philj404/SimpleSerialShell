@@ -275,5 +275,6 @@ int SimpleSerialShell::peek()
 
 void SimpleSerialShell::flush()
 {
-  return shellConnection ? shellConnection->peek() : 0;
+  if(shellConnection)
+    shellConnection->flush();
 }
