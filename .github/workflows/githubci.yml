@@ -1,4 +1,4 @@
-name: Arduino Library CI
+name: Arduino SimpleSerialShell Library CI
 
 on: [pull_request, push, repository_dispatch]
 
@@ -26,6 +26,7 @@ jobs:
     #    there is a "gh-pages" branch
     #    github repository has a secret GH_REPO_TOKEN with repo access
     #        (used to push generated docs back onto github)
+    #
     - name: doxygen
       env:
         GH_REPO_TOKEN: ${{ secrets.GH_REPO_TOKEN }}
