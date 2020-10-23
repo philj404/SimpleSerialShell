@@ -1,5 +1,7 @@
 name: Arduino SimpleSerialShell Library CI
 
+# See https://learn.adafruit.com/the-well-automated-arduino-library/doxygen
+
 on: [pull_request, push, repository_dispatch]
 
 jobs:
