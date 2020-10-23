@@ -3,6 +3,16 @@
 #define SIMPLE_SERIAL_SHELL_H
 
 ////////////////////////////////////////////////////////////////////////////////
+/*!
+ *  @file SimpleSerialShell.h
+ *
+ *  @section dependencies Dependencies
+ *
+ *  Depends on Stream.  The shell is an instance of Stream so anthing that
+ *  works with a Stream should also work with the shell.
+ *
+ *  @section author Phil Jansen
+ */
 class SimpleSerialShell : public Stream {
   public:
     SimpleSerialShell(void);

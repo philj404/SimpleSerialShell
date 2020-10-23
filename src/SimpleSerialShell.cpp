@@ -1,13 +1,23 @@
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 
+////////////////////////////////////////////////////////////////////////////////
+/*!
+ *  @file SimpleSerialShell.cpp
+ *
+ *  Implementation for the shell.
+ *
+ */
+
 SimpleSerialShell shell;
 
 //
 SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
 
 ////////////////////////////////////////////////////////////////////////////////
-// associate a named command with the function to call.
+/*!
+ *  @brief associates a named command with the function to call.
+ */
 class SimpleSerialShell::Command {
   public:
     Command(const __FlashStringHelper * n, CommandFunction f): name(n), myFunc(f) {};
