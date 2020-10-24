@@ -29,8 +29,13 @@ jobs:
     #    github repository has a secret GH_REPO_TOKEN with repo access
     #        (used to push generated docs back onto github)
     #
-    - name: doxygen
-      env:
-        GH_REPO_TOKEN: ${{ secrets.GH_REPO_TOKEN }}
-        PRETTYNAME : "SimpleSerialShell Library"
-      run: bash ci/doxy_gen_and_deploy.sh
+    # NOTE: at this time I don't think doxygen is worth it for this
+    #       library. Overkill for a "simple shell"?
+    #
+    #       See the README.md for how to use.
+    #
+    #- name: doxygen
+    #  env:
+    #    GH_REPO_TOKEN: ${{ secrets.GH_REPO_TOKEN }}
+    #    PRETTYNAME : "SimpleSerialShell Library"
+    #  run: bash ci/doxy_gen_and_deploy.sh
