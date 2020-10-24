@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 /*!
  *  @file SimpleSerialShell.h
- *
- *  @section author
- *  Phil Jansen
  */
 
 #ifndef SIMPLE_SERIAL_SHELL_H
 #define SIMPLE_SERIAL_SHELL_H
 
+/*!
+ * @brief SimpleSerialShell interface
+ */
 class SimpleSerialShell : public Stream {
   public:
     SimpleSerialShell(void);
@@ -64,7 +64,11 @@ class SimpleSerialShell : public Stream {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-extern SimpleSerialShell shell; //! singleton object
+/*! @brief shell singleton object.
+ *  No need to create the shell (with new). 
+ *  Just refer to it and the linker will pull it in for you.
+ */
+extern SimpleSerialShell shell;
 
 //example commands which would be easy to add to the shell:
 //extern int helloWorld(int argc, char **argv);

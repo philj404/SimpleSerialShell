@@ -10,8 +10,8 @@
  *  @section dependencies Dependencies
  *
  *  Depends on the Arduino environment and its Stream interface.
- *  The shell is an instance of Stram so anything that works with Stream should
- *  also work with the shell.
+ *  The shell is an instance of Stream so anything that works with
+ *  Stream should also work with the shell.
  *
  *  @section author Author
  *
@@ -40,7 +40,13 @@ SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
  */
 class SimpleSerialShell::Command {
   public:
-    Command(const __FlashStringHelper * n, CommandFunction f): name(n), myFunc(f) {};
+    /*!
+     * @brief constructor
+     * @param n command name
+     * @param f function to call
+     */
+    Command(const __FlashStringHelper * n,
+		    CommandFunction f): name(n), myFunc(f) {};
 
     /*!
      *  @brief execute this command
@@ -53,8 +59,10 @@ class SimpleSerialShell::Command {
       return myFunc(argc, argv);
     };
 
-    //! @brief used to sort commands
-    // 
+    /*! @brief used to sort commands
+     *  @param other other Command to compare
+     *  @return -1, 0, 1 depending on which command should be first
+     */
     int compare(const Command * other) const
     {
       const String otherNameString(other->name);
@@ -75,12 +83,13 @@ class SimpleSerialShell::Command {
       return comparison;
     };
 
-    const __FlashStringHelper * name;
-    CommandFunction myFunc;
-    Command * next;	// linked list
+    const __FlashStringHelper * name; ///< command name
+    CommandFunction myFunc;	///< command function
+    Command * next;	///< linked list
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+//! @brief constructor
 SimpleSerialShell::SimpleSerialShell()
   : shellConnection(NULL),
     m_lastErrNo(EXIT_SUCCESS)
@@ -135,6 +144,7 @@ bool SimpleSerialShell::executeIfInput(void)
 
 //////////////////////////////////////////////////////////////////////////////
 //! @brief connect shell to a Stream (e.g. Serial, Serial2, ...)
+//! @param requester the serial stream receiving commands
 void SimpleSerialShell::attach(Stream & requester)
 {
   shellConnection = &requester;
@@ -340,7 +350,10 @@ int SimpleSerialShell::printHelp(int argc, char **argv)
 }
 
 ///////////////////////////////////////////////////////////////
-//! @brief i/o stream support
+/*! @brief i/o stream support
+ *  @param aByte a byte to write
+ *  @return number of bytes written successfully (0 or 1)
+ */
 size_t SimpleSerialShell::write(uint8_t aByte)
 {
   return shellConnection ?
@@ -349,18 +362,21 @@ size_t SimpleSerialShell::write(uint8_t aByte)
 }
 
 //! @brief i/o stream support
+//! @return 1 if stream has data available
 int SimpleSerialShell::available()
 {
   return shellConnection ? shellConnection->available() : 0;
 }
 
 //! @brief i/o stream support
+//! @return a byte from stream
 int SimpleSerialShell::read()
 {
   return shellConnection ? shellConnection->read() : 0;
 }
 
 //! @brief i/o stream support
+//! @return the next byte the stream will read
 int SimpleSerialShell::peek()
 {
   return shellConnection ? shellConnection->peek() : 0;
