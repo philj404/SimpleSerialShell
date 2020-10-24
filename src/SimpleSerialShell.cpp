@@ -4,7 +4,7 @@
  *
  *  @mainpage Simple Serial Shell library
  *
- *  for usage see the README.md description
+ *  For usage see the README.md description
  *  [https://github.com/philj404/SimpleSerialShell/blob/main/README.md]
  *
  *  @section dependencies Dependencies
@@ -13,7 +13,9 @@
  *  The shell is an instance of Stram so anything that works with Stream should
  *  also work with the shell.
  *
- *  @section author Phil Jansen
+ *  @section author Author
+ *
+ *  Phil Jansen
  *
  */
 
@@ -44,6 +46,7 @@ class SimpleSerialShell::Command {
      *  @brief execute this command
      *  @param argc number of arguments
      *  @param argv array of argument strings
+     *  @return function exit code
      */
     int execute(int argc, char **argv)
     {
@@ -58,8 +61,13 @@ class SimpleSerialShell::Command {
       return compareName(otherNameString.c_str());
     };
 
-    //! @brief return 0 if aName matches this command
-    //! @param aName the command name
+    /*!
+     * @brief for sorting: is this name before or after the other name?
+     *
+     * @return 0 if aName matches this command
+     *         
+     * @param aName the command name
+     */
     int compareName(const char * aName) const
     {
       const String myNameString(name);
@@ -84,6 +92,11 @@ SimpleSerialShell::SimpleSerialShell()
 };
 
 //////////////////////////////////////////////////////////////////////////////
+/*!
+ * @brief add a command for the shell to recognize
+ * @param name command name for example F("echo")
+ * @param f function to call when name is recognized
+ */
 void SimpleSerialShell::addCommand(
 		const __FlashStringHelper * name, CommandFunction f)
 {
@@ -104,7 +117,9 @@ void SimpleSerialShell::addCommand(
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//! @brief collect input and execute command if line complete
+/*! @brief collect input and execute command if line complete
+ *  @return true if a command was executed
+ */
 bool SimpleSerialShell::executeIfInput(void)
 {
   bool bufferReady = prepInput();
@@ -132,6 +147,8 @@ void SimpleSerialShell::attach(Stream & requester)
  * to output, so some of this is overkill.
  * 
  * But for serial terminals, backspace would be useful.
+ *
+ * @return true when buffer is ready to parse
  */
 bool SimpleSerialShell::prepInput(void)
 {
@@ -193,6 +210,7 @@ bool SimpleSerialShell::prepInput(void)
 /*!
  * @brief process a string as if it were typed from console
  *  @param commandString a command with arguments; e.g. "echo hello"
+ *  @return command exit code
  */
 int SimpleSerialShell::execute(const char commandString[])
 {
@@ -202,8 +220,10 @@ int SimpleSerialShell::execute(const char commandString[])
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//! @brief process the buffer, find and execute command
-//
+/*!
+ * @brief process the buffer, find and execute command
+ * @return command exit code
+ */
 int SimpleSerialShell::execute(void)
 {
   char * argv[MAXARGS] = {0};
@@ -242,6 +262,7 @@ int SimpleSerialShell::execute(void)
  * @brief execute command with arguments
  * @param argc number of arguments in araray (including command name)
  * @param argv array of argument strings for command to process
+ * @return command exit code
  */
 int SimpleSerialShell::execute(int argc, char **argv)
 {
@@ -265,6 +286,7 @@ int SimpleSerialShell::execute(int argc, char **argv)
  * @brief report an error
  * @param constMsg error message
  * @param error code
+ * @return error code
  */
 int SimpleSerialShell::report(const __FlashStringHelper * constMsg, int errorCode)
 {
@@ -296,10 +318,13 @@ void SimpleSerialShell::resetBuffer(void)
  *  @brief helper to print the list of commands
  * 
  * SimpleSerialShell::printHelp() is a static method.
- * printHelp() can access the linked list of commands.
+ * It can access the shell's linked list of commands.
+ *
+ * printHelp() ignores its input arguments.
  * 
  * @param argc number of argument strings
  * @param argv array of argument strings
+ * @return 0 (OK/no errors)
  */
 int SimpleSerialShell::printHelp(int argc, char **argv)
 {
@@ -315,8 +340,7 @@ int SimpleSerialShell::printHelp(int argc, char **argv)
 }
 
 ///////////////////////////////////////////////////////////////
-//! @brief i/o stream indirection/delegation
-//
+//! @brief i/o stream support
 size_t SimpleSerialShell::write(uint8_t aByte)
 {
   return shellConnection ?
@@ -324,25 +348,25 @@ size_t SimpleSerialShell::write(uint8_t aByte)
          : 0;
 }
 
-//! @brief i/o stream indirection/delegation
+//! @brief i/o stream support
 int SimpleSerialShell::available()
 {
   return shellConnection ? shellConnection->available() : 0;
 }
 
-//! @brief i/o stream indirection/delegation
+//! @brief i/o stream support
 int SimpleSerialShell::read()
 {
   return shellConnection ? shellConnection->read() : 0;
 }
 
-//! @brief i/o stream indirection/delegation
+//! @brief i/o stream support
 int SimpleSerialShell::peek()
 {
   return shellConnection ? shellConnection->peek() : 0;
 }
 
-//! @brief i/o stream indirection/delegation
+//! @brief i/o stream support
 void SimpleSerialShell::flush()
 {
   if(shellConnection)

@@ -18,6 +18,10 @@ class SimpleSerialShell : public Stream {
      *  Unix-style (from 1970!).
      *
      * Functions must have a signature like: "int hello(int argc, char ** argv)"
+     *
+     * argc is the number of arguments
+     *
+     * argv is an array of argc character pointers (C-style strings)
      */
     typedef int (*CommandFunction)(int, char ** );
 
