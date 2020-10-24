@@ -1,4 +1,4 @@
-// ArduinoCommands.cpp
+//! @file ArduinoCommands.cpp
 // support for controlling Arduino pins through a serial command line interface
 //
 //
@@ -19,7 +19,7 @@ int badArgCount( char * cmdName )
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-// int <--> symbolic translations
+//! @brief int <--> symbolic translations
 //
 struct lookupVals
 {
@@ -28,6 +28,7 @@ struct lookupVals
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+//! @brief translate symbolic aName into its numeric value
 int lookup(const char * aName, const lookupVals entries[])
 {
   int i = 0;
@@ -42,6 +43,7 @@ int lookup(const char * aName, const lookupVals entries[])
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+//! @brief translate numeric vallue into a symbolic aName
 const char * reverseLookup(int aVal, const lookupVals entries[])
 {
   int i = 0;

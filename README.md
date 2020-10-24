@@ -1,4 +1,5 @@
-# SimpleSerialShell # [![Build Status](https://travis-ci.com/philj404/SimpleSerialShell.svg?branch=master)](https://travis-ci.com/philj404/SimpleSerialShell)
+# SimpleSerialShell
+[![Build Status](https://travis-ci.com/philj404/SimpleSerialShell.svg?branch=master)](https://travis-ci.com/philj404/SimpleSerialShell)
 An extensible command shell for Arduino.
 
 This library provides a basic "command line interface" for your Arduino through its serial interface.  
