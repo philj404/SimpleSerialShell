@@ -5,6 +5,7 @@
  *  @mainpage Simple Serial Shell library
  *
  *  for usage see the README.md description
+ *  [https://github.com/philj404/SimpleSerialShell/blob/main/README.md]
  *
  *  @section dependencies Dependencies
  *
