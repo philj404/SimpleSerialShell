@@ -220,6 +220,12 @@ int SimpleSerialShell::execute(int argc, char **argv)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+int SimpleSerialShell::lastErrNo(void)
+{
+  return m_lastErrNo;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::report(const __FlashStringHelper * constMsg, int errorCode)
 {
   if (errorCode != EXIT_SUCCESS)

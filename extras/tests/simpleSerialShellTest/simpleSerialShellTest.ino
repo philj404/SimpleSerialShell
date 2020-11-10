@@ -29,6 +29,7 @@ SimMonitor terminal;
 
 void prepForTests(void)
 {
+    terminal.init();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -38,11 +39,42 @@ test(test_execute) {
 
     int response = shell.execute("echo hello world");
     assertEqual(response, 0);
+    int errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);      // OK or no errors
 
     assertEqual(terminal.getline(), "hello world\r\n");
 
     response = shell.execute("sum 1 2 3");
     assertEqual(response, 6);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 6);      // sum(...) returned 6
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// confirm tasks can be cancelled.
+test(test_executeIfInput) {
+    prepForTests();
+
+    const char* echoCmd = "echo hello world";
+    bool response = false;
+    int errNo = 0;
+
+    for(int i = 0; echoCmd[i] != '\0'; i++) {
+        terminal.pressKey(echoCmd[i]);
+        response = shell.executeIfInput();
+        assertFalse(response);
+    }
+
+    // shell echoes typed keys back to terminal?
+    assertEqual(terminal.getline(), "echo hello world");
+
+    terminal.pressKey('\r');
+    response = shell.executeIfInput();
+    assertTrue(response);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);    // OK or no errors
+
+    assertEqual(terminal.getline(), "\r\nhello world\r\n");
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -70,6 +102,6 @@ void setup() {
 void loop() {
     // Should get:
     // TestRunner summary:
-    //    <n> passed, <n> failed, <n> skipped, <n> timed out, out of <n> test(s).
+    //   <n> passed, <n> failed, <n> skipped, <n> timed out, out of <n> test(s).
     aunit::TestRunner::run();
 }

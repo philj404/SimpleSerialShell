@@ -11,7 +11,8 @@ class SimMonitor: public Stream {
         SimMonitor(void);
         void init(void);
         String getline(void); // get the line written to stream
-        void sendline(const String & s);
+        //void pressKeys(const String & s);  // send a line
+        size_t pressKey(char c);  // send a char
 
         // stream emulation
         virtual size_t write(uint8_t);
