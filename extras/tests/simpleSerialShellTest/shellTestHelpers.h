@@ -10,9 +10,11 @@ class SimMonitor: public Stream {
     public:
         SimMonitor(void);
         void init(void);
-        String getline(void); // get the line written to stream
+        String getline(void); // get the line sent to display
+        int getOutput(void);  // get display output char, or -1 if none
+
         //void pressKeys(const String & s);  // send a line
-        size_t pressKey(char c);  // send a char
+        size_t pressKey(char c);  // simulate a keypress
 
         // stream emulation
         virtual size_t write(uint8_t);

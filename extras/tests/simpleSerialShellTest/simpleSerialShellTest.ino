@@ -59,14 +59,15 @@ test(test_executeIfInput) {
     bool response = false;
     int errNo = 0;
 
-    for(int i = 0; echoCmd[i] != '\0'; i++) {
+    for (int i = 0; echoCmd[i] != '\0'; i++) {
+        auto aKey = echoCmd[i];
         terminal.pressKey(echoCmd[i]);
         response = shell.executeIfInput();
         assertFalse(response);
-    }
 
-    // shell echoes typed keys back to terminal?
-    assertEqual(terminal.getline(), "echo hello world");
+        char echoed = (char) terminal.getOutput(); // typed keys echoed back?
+        assertEqual(echoed, aKey);
+    }
 
     terminal.pressKey('\r');
     response = shell.executeIfInput();
