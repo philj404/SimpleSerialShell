@@ -11,16 +11,16 @@ SimMonitor::SimMonitor(void) {
 }
 
 void SimMonitor::init(void) {
-    readBuffer.flush();
-    writeBuffer.flush();
+    keyboardBuffer.flush();
+    displayBuffer.flush();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 String SimMonitor::getline(void) {
     String theLine;
     theLine.reserve(BUFSIZE);
-    while (writeBuffer.count() > 0) {
-        theLine += writeBuffer.dequeue();
+    while (displayBuffer.count() > 0) {
+        theLine += displayBuffer.dequeue();
     }
     return theLine;
 }
@@ -29,8 +29,8 @@ String SimMonitor::getline(void) {
 // get a character sent to the display
 int SimMonitor::getOutput(void) {
     int theKey = -1;
-    if (writeBuffer.count() > 0) {
-        theKey = writeBuffer.dequeue();
+    if (displayBuffer.count() > 0) {
+        theKey = displayBuffer.dequeue();
     }
     return theKey;
 }
@@ -38,7 +38,7 @@ int SimMonitor::getOutput(void) {
 ////////////////////////////////////////////////////////////////////////////////
 // simulate a keypress
 size_t SimMonitor::pressKey(char c) {
-    return readBuffer.enqueue(c);
+    return keyboardBuffer.enqueue(c);
 }
 
 
@@ -48,22 +48,22 @@ size_t SimMonitor::pressKey(char c) {
 size_t SimMonitor::write(uint8_t aByte) // write to "display"
 {
     // carriage return should reset line?
-    return writeBuffer.enqueue(aByte);
+    return displayBuffer.enqueue(aByte);
 }
 
 int SimMonitor::available()     // any keypresses?
 {
-    return (readBuffer.count() > 0);
+    return (keyboardBuffer.count() > 0);
 }
 
 int SimMonitor::read()          // read keyboard input
 {
-    return readBuffer.dequeue();
+    return keyboardBuffer.dequeue();
 }
 
 int SimMonitor::peek()
 {
-    return readBuffer.peek();
+    return keyboardBuffer.peek();
 }
 
 void SimMonitor::flush()

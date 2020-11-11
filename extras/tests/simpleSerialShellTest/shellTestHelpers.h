@@ -25,8 +25,8 @@ class SimMonitor: public Stream {
 
     private:
         static const int BUFSIZE = 80;
-        SimpleFIFO<char, BUFSIZE> readBuffer;
-        SimpleFIFO<char, BUFSIZE> writeBuffer;
+        SimpleFIFO<char, BUFSIZE> keyboardBuffer;
+        SimpleFIFO<char, BUFSIZE> displayBuffer;
 };
 
 void addTestCommands(void);
