@@ -9,9 +9,9 @@
 //         "strings together"
 //         (improves readability for very long strings)
 //
-int showID(int argc=0, char**argv=NULL)
+int showID(int argc = 0, char**argv = NULL)
 {
-  shell.println(F( "Running " __FILE__ ",\nBuilt " __DATE__));
+    shell.println(F( "Running " __FILE__ ",\nBuilt " __DATE__));
 };
 
 
@@ -22,64 +22,64 @@ int togglePeriod = 1000;
 //
 void toggleLED_nb(void)
 {
-  static auto lastToggle = millis();  // saved between calls
-  auto now = millis();
+    static auto lastToggle = millis();  // saved between calls
+    auto now = millis();
 
-  if (now - lastToggle > togglePeriod/2)
-  {
-    // toggle
-    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-    lastToggle = now;
-  }
+    if (now - lastToggle > togglePeriod / 2)
+    {
+        // toggle
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+        lastToggle = now;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int setTogglePeriod(int argc, char **argv)
 {
-  if(argc != 2) {
-    shell.println("bad argument count");
-    return -1;
-  }
-  togglePeriod = atoi(argv[1]);
-  shell.print("Setting LED toggle period to ");
-  shell.print(togglePeriod);
-  shell.println("ms");
+    if (argc != 2) {
+        shell.println("bad argument count");
+        return -1;
+    }
+    togglePeriod = atoi(argv[1]);
+    shell.print("Setting LED toggle period to ");
+    shell.print(togglePeriod);
+    shell.println("ms");
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 int getTogglePeriod(int argc, char **argv)
 {
-  shell.print("LED toggle period is ");
-  shell.print(togglePeriod);
-  shell.println("ms");
+    shell.print("LED toggle period is ");
+    shell.print(togglePeriod);
+    shell.println("ms");
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 ////////////////////////////////////////////////////////////////////////////////
 void setup() {
-  // put your setup code here, to run once:
+    // put your setup code here, to run once:
 
-  pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
 
-  //Serial.begin(9600); older default bit rate
-  Serial.begin(115200);
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-    // AND you want to block until there's a connection
-    // otherwise the shell can quietly drop output.
-  }
+    //Serial.begin(9600); older default bit rate
+    Serial.begin(115200);
+    while (!Serial) {
+        // wait for serial port to connect. Needed for native USB port only
+        // AND you want to block until there's a connection
+        // otherwise the shell can quietly drop output.
+    }
 
-  //example
-  shell.attach(Serial);
-  shell.addCommand(F("id?"), showID);
+    //example
+    shell.attach(Serial);
+    shell.addCommand(F("id?"), showID);
 
-  shell.addCommand(F("setTogglePeriod"), setTogglePeriod);
-  shell.addCommand(F("getTogglePeriod"), getTogglePeriod);
+    shell.addCommand(F("setTogglePeriod"), setTogglePeriod);
+    shell.addCommand(F("getTogglePeriod"), getTogglePeriod);
 
-  showID();
-  Serial.println(F("Ready."));
+    showID();
+    Serial.println(F("Ready."));
 }
 
 // non blocking LED toggle
@@ -87,11 +87,11 @@ extern void toggleLED_nb(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
-  //shell->execute("echo Hello World");
-  shell.executeIfInput();
+    //shell->execute("echo Hello World");
+    shell.executeIfInput();
 
-  // show loop() is still running -- not waiting
-  toggleLED_nb();
+    // show loop() is still running -- not waiting
+    toggleLED_nb();
 }

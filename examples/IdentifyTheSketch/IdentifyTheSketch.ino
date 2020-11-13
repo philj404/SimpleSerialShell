@@ -9,35 +9,35 @@
 //         "strings together"
 //         (improves readability for very long strings)
 //
-int showID(int argc=0, char**argv=NULL)
+int showID(int argc = 0, char**argv = NULL)
 {
-  shell.println(F( "Running " __FILE__ ", Built " __DATE__));
+    shell.println(F( "Running " __FILE__ ", Built " __DATE__));
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 void setup() {
-  // put your setup code here, to run once:
+    // put your setup code here, to run once:
 
-  Serial.begin(115200);
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-    // AND you want to block until there's a connection
-    // otherwise the shell can quietly drop output.
-  }
+    Serial.begin(115200);
+    while (!Serial) {
+        // wait for serial port to connect. Needed for native USB port only
+        // AND you want to block until there's a connection
+        // otherwise the shell can quietly drop output.
+    }
 
-  //example
-  shell.attach(Serial);
-  shell.addCommand(F("id?"), showID);
+    //example
+    shell.attach(Serial);
+    shell.addCommand(F("id?"), showID);
 
-  showID();
-  shell.println(F("Ready."));
-  shell.println(F("Type 'help' for help"));
+    showID();
+    shell.println(F("Ready."));
+    shell.println(F("Type 'help' for help"));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
-  shell.executeIfInput();
+    shell.executeIfInput();
 }

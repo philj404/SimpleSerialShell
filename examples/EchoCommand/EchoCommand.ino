@@ -9,9 +9,9 @@
 //         "strings together"
 //         (improves readability for very long strings)
 //
-int showID(int argc=0, char**argv=NULL)
+int showID(int argc = 0, char**argv = NULL)
 {
-  shell.println(F( "Running " __FILE__ ", Built " __DATE__));
+    shell.println(F( "Running " __FILE__ ", Built " __DATE__));
 };
 
 
@@ -26,17 +26,17 @@ int showID(int argc=0, char**argv=NULL)
 //
 int echo(int argc, char **argv)
 {
-  auto lastArg = argc - 1;
-  for ( int i = 1; i < argc; i++) {
+    auto lastArg = argc - 1;
+    for ( int i = 1; i < argc; i++) {
 
-    shell.print(argv[i]);
+        shell.print(argv[i]);
 
-    if (i < lastArg)
-      shell.print(F(" "));
-  }
-  shell.println();
+        if (i < lastArg)
+            shell.print(F(" "));
+    }
+    shell.println();
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
 
 
@@ -45,39 +45,39 @@ int echo(int argc, char **argv)
 //
 void toggleLED_nb(void)
 {
-  static auto lastToggle = millis();  // saved between calls
-  auto now = millis();
+    static auto lastToggle = millis();  // saved between calls
+    auto now = millis();
 
-  if (now - lastToggle > 1000)
-  {
-    // toggle
-    digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-    lastToggle = now;
-  }
+    if (now - lastToggle > 1000)
+    {
+        // toggle
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+        lastToggle = now;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void setup() {
-  // put your setup code here, to run once:
+    // put your setup code here, to run once:
 
-  pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
 
-  //Serial.begin(9600); older default bit rate
-  Serial.begin(115200);
-  while (!Serial) {
-    // wait for serial port to connect. Needed for native USB port only
-    // AND you want to block until there's a connection
-    // otherwise the shell can quietly drop output.
-  }
+    //Serial.begin(9600); older default bit rate
+    Serial.begin(115200);
+    while (!Serial) {
+        // wait for serial port to connect. Needed for native USB port only
+        // AND you want to block until there's a connection
+        // otherwise the shell can quietly drop output.
+    }
 
-  //example
-  shell.attach(Serial);
-  shell.addCommand(F("id?"), showID);
+    //example
+    shell.attach(Serial);
+    shell.addCommand(F("id?"), showID);
 
-  shell.addCommand(F("echo"), echo);
+    shell.addCommand(F("echo"), echo);
 
-  showID();
-  Serial.println(F("Ready."));
+    showID();
+    Serial.println(F("Ready."));
 }
 
 // non blocking LED toggle
@@ -85,11 +85,11 @@ extern void toggleLED_nb(void);
 
 ////////////////////////////////////////////////////////////////////////////////
 void loop() {
-  // put your main code here, to run repeatedly:
+    // put your main code here, to run repeatedly:
 
-  //shell->execute("echo Hello World");
-  shell.executeIfInput();
+    //shell->execute("echo Hello World");
+    shell.executeIfInput();
 
-  // show loop() is still running -- not waiting
-  toggleLED_nb();
+    // show loop() is still running -- not waiting
+    toggleLED_nb();
 }
