@@ -33,8 +33,8 @@ void prepForTests(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// confirm tasks can be cancelled.
-test(test_execute) {
+// shell.execute( string ) works?
+test(execute) {
     prepForTests();
 
     int response = shell.execute("echo hello world");
@@ -51,8 +51,8 @@ test(test_execute) {
 };
 
 //////////////////////////////////////////////////////////////////////////////
-// confirm tasks can be cancelled.
-test(test_executeIfInput) {
+// shell.executeIfInput() from stream works?
+test(executeIfInput) {
     prepForTests();
 
     const char* echoCmd = "echo hello world";
@@ -77,6 +77,90 @@ test(test_executeIfInput) {
 
     assertEqual(terminal.getline(), "\r\nhello world\r\n");
 };
+
+//////////////////////////////////////////////////////////////////////////////
+// shell backspace from stream works?
+test(backspace) {
+    prepForTests();
+
+    char eraseChar = '\b';
+    const char* echoCmd = "ech3";
+    bool response = false;
+    int errNo = 0;
+
+    for (int i = 0; echoCmd[i] != '\0'; i++) {
+        char aKey = echoCmd[i];
+        terminal.pressKey(aKey);
+        response = shell.executeIfInput();
+        assertFalse(response);
+
+        char echoed = (char) terminal.getOutput(); // typed keys echoed back?
+        assertEqual(echoed, aKey);
+    }
+
+    terminal.pressKey(eraseChar);
+    response = shell.executeIfInput();
+    char echoed = (char) terminal.getOutput();
+    assertEqual((int) echoed,(int) '\b'); // back up
+    echoed = (char) terminal.getOutput();
+    assertEqual( echoed, ' '); // erase 'typo' char
+    echoed = (char) terminal.getOutput();
+    assertEqual((int) echoed,(int) '\b'); // back up (cursor on whitespace)
+
+    const char* echoCmdFinish = "o hello world";
+    for (int i = 0; echoCmdFinish[i] != '\0'; i++) {
+        auto aKey = echoCmdFinish[i];
+        terminal.pressKey(aKey);
+        response = shell.executeIfInput();
+        assertFalse(response);
+
+        char echoed = (char) terminal.getOutput(); // typed keys echoed back?
+        assertEqual(echoed, aKey);
+    }
+
+    terminal.pressKey('\r');
+    response = shell.executeIfInput();
+    assertTrue(response);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);    // OK or no errors
+
+    assertEqual(terminal.getline(), "\r\nhello world\r\n");
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// shell DEL key from stream works?
+test(delete) {
+    prepForTests();
+
+    char eraseChar = (char) 127;    // DEL key
+    const char* echoCmd = "ech3";
+    bool response = false;
+    int errNo = 0;
+
+    terminal.pressKeys(echoCmd);
+    response = shell.executeIfInput();
+    assertFalse(response);
+    auto echoed = terminal.getline(); // typed keys echoed back?
+    assertEqual(echoCmd, echoed);
+
+    terminal.pressKey(eraseChar);
+    response = shell.executeIfInput();
+    echoed = terminal.getline();
+    assertEqual("\b \b",echoed); // back up, erase typo, back up
+
+    const char* echoCmdFinish = "o hello world";
+
+    terminal.pressKeys(echoCmdFinish);
+    assertEqual(terminal.getline(), echoCmdFinish);
+
+    terminal.pressKey('\r');
+    response = shell.executeIfInput();
+    assertTrue(response);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);    // OK or no errors
+
+    assertEqual(terminal.getline(), "\r\nhello world\r\n");
+}
 
 //////////////////////////////////////////////////////////////////////////////
 // ... so which sketch is this?

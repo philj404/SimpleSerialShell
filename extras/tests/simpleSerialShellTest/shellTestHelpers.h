@@ -13,7 +13,7 @@ class SimMonitor: public Stream {
         String getline(void); // get the line sent to display
         int getOutput(void);  // get display output char, or -1 if none
 
-        //void pressKeys(const String & s);  // send a line
+        size_t pressKeys(const char * s);  // send a line
         size_t pressKey(char c);  // simulate a keypress
 
         // stream emulation
