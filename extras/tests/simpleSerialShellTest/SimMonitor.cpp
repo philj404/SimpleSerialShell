@@ -70,12 +70,12 @@ int SimMonitor::available()     // any keypresses?
 
 int SimMonitor::read()          // read keyboard input
 {
-    return keyboardBuffer.dequeue();
+    return available() ? keyboardBuffer.dequeue() : -1;
 }
 
 int SimMonitor::peek()
 {
-    return keyboardBuffer.peek();
+    return available() ? keyboardBuffer.peek() : -1;
 }
 
 void SimMonitor::flush()

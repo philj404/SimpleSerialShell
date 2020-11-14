@@ -101,11 +101,11 @@ test(backspace) {
     terminal.pressKey(eraseChar);
     response = shell.executeIfInput();
     char echoed = (char) terminal.getOutput();
-    assertEqual((int) echoed,(int) '\b'); // back up
+    assertEqual((int) echoed, (int) '\b'); // back up
     echoed = (char) terminal.getOutput();
     assertEqual( echoed, ' '); // erase 'typo' char
     echoed = (char) terminal.getOutput();
-    assertEqual((int) echoed,(int) '\b'); // back up (cursor on whitespace)
+    assertEqual((int) echoed, (int) '\b'); // back up (cursor on whitespace)
 
     const char* echoCmdFinish = "o hello world";
     for (int i = 0; echoCmdFinish[i] != '\0'; i++) {
@@ -146,11 +146,12 @@ test(delete) {
     terminal.pressKey(eraseChar);
     response = shell.executeIfInput();
     echoed = terminal.getline();
-    assertEqual("\b \b",echoed); // back up, erase typo, back up
+    assertEqual("\b \b", echoed); // back up, erase typo, back up
 
     const char* echoCmdFinish = "o hello world";
 
     terminal.pressKeys(echoCmdFinish);
+    response = shell.executeIfInput();
     assertEqual(terminal.getline(), echoCmdFinish);
 
     terminal.pressKey('\r');

@@ -20,7 +20,8 @@ SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
  */
 class SimpleSerialShell::Command {
     public:
-        Command(const __FlashStringHelper * n, CommandFunction f): name(n), myFunc(f) {};
+        Command(const __FlashStringHelper * n, CommandFunction f):
+            name(n), myFunc(f) {};
 
         int execute(int argc, char **argv)
         {
@@ -106,55 +107,65 @@ void SimpleSerialShell::attach(Stream & requester)
 bool SimpleSerialShell::prepInput(void)
 {
     bool bufferReady = false; // assume not ready
+    bool moreData = true;
 
-    int c = read();
-    switch (c)
-    {
-        case -1: // No character present; don't do anything.
-        case  0: // throw away NUL characters
-            break;
+    do {
+        int c = read();
+        switch (c)
+        {
+            case -1: // No character present; don't do anything.
+                moreData = false;
+                break;
+            case  0: // throw away NUL characters
+                break;
 
-        // Line editing characters
-        case 127: // DEL delete key
-        case '\b':  // CTRL(H) backspace
-            // Destructive backspace: remove last character
-            if (inptr > 0) {
-                print("\010 \010");  // "\b \b" -- remove char in raw UI
-                linebuffer[--inptr] = 0;
-            }
-            break;
+            // Line editing characters
+            case 127: // DEL delete key
+            case '\b':  // CTRL(H) backspace
+                // Destructive backspace: remove last character
+                if (inptr > 0) {
+                    print("\b \b");  // remove char in raw UI
+                    linebuffer[--inptr] = 0;
+                }
+                break;
 
-        case 0x12: //CTRL('R')
-            //Ctrl-R retypes the line
-            print("\r\n");
-            print(linebuffer);
-            break;
+            case 0x12: //CTRL('R')
+                //Ctrl-R retypes the line
+                print("\r\n");
+                print(linebuffer);
+                break;
 
-        case 0x15: //CTRL('U')
-            //Ctrl-U deletes the entire line and starts over.
-            println("XXX");
-            resetBuffer();
-            break;
+            case 0x15: //CTRL('U')
+                //Ctrl-U deletes the entire line and starts over.
+                println("XXX");
+                resetBuffer();
+                break;
 
-        case ';':   // BLE monitor apps don't let you add '\r' to a string, so ';' ends a command
-        case '\r':  //CTRL('M') carriage return (or "Enter" key)
-            // raw input only sends "return" for the keypress
-            // line is complete
-            println();     // Echo newline too.
-            bufferReady = true;
-            break;
+            case ';':   // BLE monitor apps don't let you add '\r' to a string,
+            // so ';' ends a command
 
-        case '\n':  //CTRL('J') linefeed
-            // ignore newline as 'raw' terminals may not send it.
-            // Serial Monitor sends a "\r\n" pair by default
-            break;
+            case '\r':  //CTRL('M') carriage return (or "Enter" key)
+                // raw input only sends "return" for the keypress
+                // line is complete
+                println();     // Echo newline too.
+                bufferReady = true;
+                break;
 
-        default:
-            // Otherwise, echo the character and append it to the buffer
-            linebuffer[inptr++] = c;
-            write(c);
-            break;
-    }
+            case '\n':  //CTRL('J') linefeed
+                // ignore newline as 'raw' terminals may not send it.
+                // Serial Monitor sends a "\r\n" pair by default
+                break;
+
+            default:
+                // Otherwise, echo the character and append it to the buffer
+                linebuffer[inptr++] = c;
+                write(c);
+                if (inptr >= BUFSIZE-1) {
+                    bufferReady = true; // flush to avoid overflow
+                }
+                break;
+        }
+    } while (moreData && !bufferReady);
 
     return bufferReady;
 }
@@ -222,7 +233,7 @@ int SimpleSerialShell::execute(int argc, char **argv)
 //////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::lastErrNo(void)
 {
-  return m_lastErrNo;
+    return m_lastErrNo;
 }
 
 //////////////////////////////////////////////////////////////////////////////
