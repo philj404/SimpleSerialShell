@@ -43,11 +43,11 @@ size_t SimMonitor::pressKey(char c) {
 
 ////////////////////////////////////////////////////////////////////////////////
 // simulate a bunch of keypresses
-size_t SimMonitor::pressKeys(const char * c) {
+size_t SimMonitor::pressKeys(const char * keys) {
     size_t numSent = 0;
 
-    for ( ; (*c); c++) {
-        numSent += pressKey(*c);
+    for (int i = 0; keys[i]; i++) {
+        numSent += pressKey(keys[i]);
     }
 
     return numSent;
