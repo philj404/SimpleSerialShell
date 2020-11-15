@@ -30,6 +30,7 @@ SimMonitor terminal;
 void prepForTests(void)
 {
     terminal.init();
+    shell.resetBuffer();
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,19 @@ test(execute) {
     assertEqual(response, 6);
     errNo = shell.lastErrNo();
     assertEqual(errNo, 6);      // sum(...) returned 6
+};
+
+//////////////////////////////////////////////////////////////////////////////
+// shell.execute( string ) fails for missing command?
+test(missingCommand) {
+    prepForTests();
+
+    int response = shell.execute("echoNOT hello world");
+    assertEqual(response, -1);
+    int errNo = shell.lastErrNo();
+    assertEqual(errNo, -1);      // OK or no errors
+
+    assertEqual(terminal.getline(), "\"echoNOT\": -1: command not found\r\n");
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -76,6 +90,68 @@ test(executeIfInput) {
     assertEqual(errNo, 0);    // OK or no errors
 
     assertEqual(terminal.getline(), "\r\nhello world\r\n");
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//  erase input line?
+test(cancelLine) {
+    prepForTests();
+
+    const char* badCmd = "BADCOMMAND BADCOMMAND";
+    bool response = false;
+    int errNo = 0;
+
+    terminal.pressKeys(badCmd);
+    response = shell.executeIfInput();
+    assertFalse(response);
+    String aLine = terminal.getline();  // flush output
+
+    terminal.pressKey(0x15);   // CTRL('U')
+    response = shell.executeIfInput();
+    aLine = terminal.getline();
+    assertEqual(aLine, "XXX\r\n");
+
+    const char* echoCmd = "echo aWord";
+    terminal.pressKeys(echoCmd);
+    response = shell.executeIfInput();
+    aLine = terminal.getline();    // flush output
+    terminal.pressKey('\r');
+    response = shell.executeIfInput();
+
+    assertTrue(response);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);    // OK or no errors
+
+    assertEqual(terminal.getline(), "\r\naWord\r\n");
+};
+
+//////////////////////////////////////////////////////////////////////////////
+//  retype input line
+test(retypeLine) {
+    prepForTests();
+
+    const char* echoCmd = "echo howdy doodie";
+    bool response = false;
+    int errNo = 0;
+
+    terminal.pressKeys(echoCmd);
+    response = shell.executeIfInput();
+    assertFalse(response);
+    String aLine = terminal.getline();  // flush output
+
+    terminal.pressKey(0x12);   // CTRL('R') retype line
+    response = shell.executeIfInput();
+    aLine = terminal.getline();
+    assertEqual(aLine, "\r\necho howdy doodie");
+
+    terminal.pressKey('\r');
+    response = shell.executeIfInput();
+
+    assertTrue(response);
+    errNo = shell.lastErrNo();
+    assertEqual(errNo, 0);    // OK or no errors
+
+    assertEqual(terminal.getline(), "\r\nhowdy doodie\r\n");
 };
 
 //////////////////////////////////////////////////////////////////////////////
