@@ -1,4 +1,4 @@
-name: Arduino SimpleSerialShell Library CI
+name: Arduino SimpleSerialShell Lib build permutation check
 
 # See https://learn.adafruit.com/the-well-automated-arduino-library/doxygen
 

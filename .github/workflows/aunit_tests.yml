@@ -1,0 +1,28 @@
+name: SimpleSerialShell unit test check
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup
+      run: |
+        cd ..
+        git clone https://github.com/bxparks/UnixHostDuino
+        git clone https://github.com/bxparks/AUnit
+    #- name: Verify examples
+      #run: |
+      #  make -C examples
+    - name: Verify extras/tests
+      run: |
+        make -C extras/tests
+    - name: Run tests
+      run: |
+        make -C extras/tests
+        make -C extras/tests runtests
+
