@@ -24,6 +24,7 @@
 //#include <Streaming.h>
 #include "shellTestHelpers.h"
 
+using namespace aunit;
 
 SimMonitor terminal;
 
@@ -34,9 +35,24 @@ void prepForTests(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// test fixture to ensure clean initial and final conditions
+//
+class ShellTest: public TestOnce {
+    protected:
+        void setup() override {
+            TestOnce::setup();
+            prepForTests();
+        }
+
+        void teardown() override {
+            prepForTests();
+            TestOnce::teardown();
+        }
+};
+
+//////////////////////////////////////////////////////////////////////////////
 // shell.execute( string ) works?
-test(execute) {
-    prepForTests();
+testF(ShellTest, execute) {
 
     int response = shell.execute("echo hello world");
     assertEqual(response, 0);
@@ -53,8 +69,7 @@ test(execute) {
 
 //////////////////////////////////////////////////////////////////////////////
 // shell.execute( string ) fails for missing command?
-test(missingCommand) {
-    prepForTests();
+testF(ShellTest, missingCommand) {
 
     int response = shell.execute("echoNOT hello world");
     assertEqual(response, -1);
@@ -66,8 +81,7 @@ test(missingCommand) {
 
 //////////////////////////////////////////////////////////////////////////////
 // shell.executeIfInput() from stream works?
-test(executeIfInput) {
-    prepForTests();
+testF(ShellTest, executeIfInput) {
 
     const char* echoCmd = "echo hello world";
     bool response = false;
@@ -94,8 +108,7 @@ test(executeIfInput) {
 
 //////////////////////////////////////////////////////////////////////////////
 //  erase input line?
-test(cancelLine) {
-    prepForTests();
+testF(ShellTest, cancelLine) {
 
     const char* badCmd = "BADCOMMAND BADCOMMAND";
     bool response = false;
@@ -127,8 +140,7 @@ test(cancelLine) {
 
 //////////////////////////////////////////////////////////////////////////////
 //  retype input line
-test(retypeLine) {
-    prepForTests();
+testF(ShellTest, retypeLine) {
 
     const char* echoCmd = "echo howdy doodie";
     bool response = false;
@@ -156,8 +168,7 @@ test(retypeLine) {
 
 //////////////////////////////////////////////////////////////////////////////
 // shell backspace from stream works?
-test(backspace) {
-    prepForTests();
+testF(ShellTest, backspace) {
 
     char eraseChar = '\b';
     const char* echoCmd = "ech3";
@@ -205,8 +216,7 @@ test(backspace) {
 
 //////////////////////////////////////////////////////////////////////////////
 // shell DEL key from stream works?
-test(delete) {
-    prepForTests();
+testF(ShellTest, delete) {
 
     char eraseChar = (char) 127;    // DEL key
     const char* echoCmd = "ech3";
