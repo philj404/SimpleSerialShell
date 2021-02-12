@@ -1,5 +1,8 @@
 Release notes
 
+### v0.2.1
+(for PlatformIO builds) Support changing the default buffer size with a #define.
+
 ### v0.2.0
 Run unit tests and confirm they PASS on github code push.
 More constistent code formatting (with astyle)

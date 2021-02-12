@@ -4,6 +4,8 @@
 
 Try and adhere to the [kernel coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html) with the exception of using 4 spaces instead of 8 for indentation.
 
+The "astyle" code formatter and the library's ```formatter.conf``` configuration file do a pretty good job of correcting indentation, removing tabs etc.
+
 ## Reporting Bugs
 
 Open an issue. Please include as much code / logging / output / information as
@@ -16,6 +18,8 @@ section](#branches) for an overview of the workflow.
 
 If it's a major change, open an issue to gauge interest before putting in too
 much effort.
+
+Ensure regression tests continue to PASS.
 
 The following subsections inspired by the [git patch guidelines](https://github.com/git/git/blob/master/Documentation/SubmittingPatches).
 
