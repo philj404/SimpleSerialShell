@@ -38,7 +38,7 @@ class SimpleSerialShell::Command {
         int compareName(const char * aName) const
         {
             const String myNameString(name);
-            int comparison = strncasecmp(myNameString.c_str(), aName, BUFSIZE);
+            int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
             return comparison;
         };
 
@@ -160,7 +160,7 @@ bool SimpleSerialShell::prepInput(void)
                 // Otherwise, echo the character and append it to the buffer
                 linebuffer[inptr++] = c;
                 write(c);
-                if (inptr >= BUFSIZE-1) {
+                if (inptr >= SIMPLE_SERIAL_SHELL_BUFSIZE-1) {
                     bufferReady = true; // flush to avoid overflow
                 }
                 break;
@@ -174,7 +174,7 @@ bool SimpleSerialShell::prepInput(void)
 int SimpleSerialShell::execute(const char commandString[])
 {
     // overwrites anything in linebuffer; hope you don't need it!
-    strncpy(linebuffer, commandString, BUFSIZE);
+    strncpy(linebuffer, commandString, SIMPLE_SERIAL_SHELL_BUFSIZE);
     return execute();
 }
 
@@ -182,7 +182,7 @@ int SimpleSerialShell::execute(const char commandString[])
 int SimpleSerialShell::execute(void)
 {
     char * argv[MAXARGS] = {0};
-    linebuffer[BUFSIZE - 1] = '\0'; // play it safe
+    linebuffer[SIMPLE_SERIAL_SHELL_BUFSIZE - 1] = '\0'; // play it safe
     int argc = 0;
 
     char * rest = NULL;

@@ -2,6 +2,10 @@
 #ifndef SIMPLE_SERIAL_SHELL_H
 #define SIMPLE_SERIAL_SHELL_H
 
+#ifndef SIMPLE_SERIAL_SHELL_BUFSIZE
+#define SIMPLE_SERIAL_SHELL_BUFSIZE 88
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 /*!
  *  @file SimpleSerialShell.h
@@ -56,9 +60,8 @@ class SimpleSerialShell : public Stream {
         bool prepInput(void);
 
         int report(const __FlashStringHelper * message, int errorCode);
-        static const char BUFSIZE = 88;
         static const char MAXARGS = 10;
-        char linebuffer[BUFSIZE];
+        char linebuffer[SIMPLE_SERIAL_SHELL_BUFSIZE];
         int inptr;
 
         class Command;
