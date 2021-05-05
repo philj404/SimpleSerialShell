@@ -24,9 +24,14 @@ class SimpleSerialShell : public Stream {
         // Unix-style (from 1970!)
         // functions must have a signature like: "int hello(int argc, char ** argv)"
         typedef int (*CommandFunction)(int, char ** );
-        //
+
+        // add commands independently
         //void addCommand(const char * name, CommandFunction f);
         void addCommand(const __FlashStringHelper * name, CommandFunction f);
+
+        // add commands as one constant table
+	struct CommandEntry {char * name; CommandFunction f;};
+        void addCommandTable(const CommandEntry aTable[], int byteSizeOfTable);
 
         void attach(Stream & shellSource);
 
@@ -66,6 +71,8 @@ class SimpleSerialShell : public Stream {
 
         class Command;
         static Command * firstCommand;
+	static CommandEntry * commandTable;
+	static int numTableEntries;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

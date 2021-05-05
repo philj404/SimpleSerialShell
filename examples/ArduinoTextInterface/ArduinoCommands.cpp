@@ -207,9 +207,30 @@ int doNoTone(int argc, char **argv)
 }
 #endif
 
+#ifdef USE_COMMAND_TABLE
+
+static const PROGMEM CommandEntry commandTable[] = {
+  { "setpinmode", setPinMode },
+  { "digitalwrite", digitalWrite },
+  { "digitalread", digitalRead },
+  { "analogread", analogRead },
+
+#ifndef ARDUINO_ARCH_ESP32
+  { "analogwrite", analogWrite },
+  { "tone", doTone },
+  { "notone", doNoTone },
+#endif
+  {NULL, NULL }
+};
+
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 int addArduinoCommands(SimpleSerialShell & shell)
 {
+#ifdef USE_COMMAND_TABLE
+  shell.addCommandTable(commandTable, sizeof(commandTable));
+#else
   shell.addCommand(F("setpinmode"), setPinMode);
   shell.addCommand(F("digitalwrite"), digitalWrite);
   shell.addCommand(F("digitalread"), digitalRead);
@@ -219,6 +240,8 @@ int addArduinoCommands(SimpleSerialShell & shell)
   shell.addCommand(F("analogwrite"), analogWrite);
   shell.addCommand(F("tone"), doTone);
   shell.addCommand(F("notone"), doNoTone);
+#endif
+
 #endif
 
   return EXIT_SUCCESS;

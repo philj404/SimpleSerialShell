@@ -13,6 +13,9 @@ SimpleSerialShell shell;
 
 //
 SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
+SimpleSerialShell::CommandEntry * SimpleSerialShell::commandTable = NULL;
+//SimpleSerialShell::numTableEntries = 0;
+SimpleSerialShell::numTableEntries(0);
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
@@ -22,6 +25,7 @@ class SimpleSerialShell::Command {
     public:
         Command(const __FlashStringHelper * n, CommandFunction f):
             name(n), myFunc(f) {};
+        Command(const CommandEntry ce);
 
         int execute(int argc, char **argv)
         {
@@ -76,6 +80,15 @@ void SimpleSerialShell::addCommand(
     }
     *temp3 = newCmd;
     newCmd->next = temp2;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+void SimpleSerialShell::addCommandTable(
+    const CommandEntry *aTable,
+    int sizeInBytes)
+{
+    commandTable = aTable;
+    numTableEntries = sizeInBytes/sizeof(CommandEntry);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -216,6 +229,13 @@ int SimpleSerialShell::execute(void)
 int SimpleSerialShell::execute(int argc, char **argv)
 {
     m_lastErrNo = 0;
+    for ( int i = 0; i < numTableEntries; i++) {
+        if (aCmd->compareName(argv[0]) == 0) {
+            m_lastErrNo = aCmd->execute(argc, argv);
+            resetBuffer();
+            return m_lastErrNo;
+        }
+    }
     for ( Command * aCmd = firstCommand; aCmd != NULL; aCmd = aCmd->next) {
         if (aCmd->compareName(argv[0]) == 0) {
             m_lastErrNo = aCmd->execute(argc, argv);
