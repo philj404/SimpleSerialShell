@@ -12,10 +12,10 @@
 SimpleSerialShell shell;
 
 //
-SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
-SimpleSerialShell::CommandEntry * SimpleSerialShell::commandTable = NULL;
-//SimpleSerialShell::numTableEntries = 0;
-SimpleSerialShell::numTableEntries(0);
+SimpleSerialShell::Command *SimpleSerialShell::firstCommand = NULL;
+const SimpleSerialShell::CommandEntry *SimpleSerialShell::commandTable = (const SimpleSerialShell::CommandEntry *)NULL;
+int SimpleSerialShell::numTableEntries = 0;
+//SimpleSerialShell::numTableEntries(0);
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
@@ -25,7 +25,6 @@ class SimpleSerialShell::Command {
     public:
         Command(const __FlashStringHelper * n, CommandFunction f):
             name(n), myFunc(f) {};
-        Command(const CommandEntry ce);
 
         int execute(int argc, char **argv)
         {
@@ -64,16 +63,16 @@ SimpleSerialShell::SimpleSerialShell()
 
 //////////////////////////////////////////////////////////////////////////////
 void SimpleSerialShell::addCommand(
-    const __FlashStringHelper * name, CommandFunction f)
+    const __FlashStringHelper *name, CommandFunction f)
 {
-    auto * newCmd = new Command(name, f);
+    Command *newCmd = new Command(name, f);
 
     // insert in list alphabetically
     // from stackoverflow...
 
-    Command* temp2 = firstCommand;
-    Command** temp3 = &firstCommand;
-    while (temp2 != NULL && (newCmd->compare(temp2) > 0) )
+    Command *temp2 = firstCommand;
+    Command **temp3 = &firstCommand;
+    while (temp2 != NULL && (newCmd->compare(temp2) > 0))
     {
         temp3 = &temp2->next;
         temp2 = temp2->next;
@@ -88,7 +87,7 @@ void SimpleSerialShell::addCommandTable(
     int sizeInBytes)
 {
     commandTable = aTable;
-    numTableEntries = sizeInBytes/sizeof(CommandEntry);
+    numTableEntries = sizeInBytes / sizeof(CommandEntry);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -97,7 +96,8 @@ bool SimpleSerialShell::executeIfInput(void)
     bool bufferReady = prepInput();
     bool didSomething = false;
 
-    if (bufferReady) {
+    if (bufferReady)
+    {
         didSomething = true;
         execute();
     }
@@ -106,7 +106,7 @@ bool SimpleSerialShell::executeIfInput(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void SimpleSerialShell::attach(Stream & requester)
+void SimpleSerialShell::attach(Stream &requester)
 {
     shellConnection = &requester;
 }
@@ -122,61 +122,64 @@ bool SimpleSerialShell::prepInput(void)
     bool bufferReady = false; // assume not ready
     bool moreData = true;
 
-    do {
+    do
+    {
         int c = read();
         switch (c)
         {
-            case -1: // No character present; don't do anything.
-                moreData = false;
-                break;
-            case  0: // throw away NUL characters
-                break;
+        case -1: // No character present; don't do anything.
+            moreData = false;
+            break;
+        case 0: // throw away NUL characters
+            break;
 
-            // Line editing characters
-            case 127: // DEL delete key
-            case '\b':  // CTRL(H) backspace
-                // Destructive backspace: remove last character
-                if (inptr > 0) {
-                    print("\b \b");  // remove char in raw UI
-                    linebuffer[--inptr] = 0;
-                }
-                break;
+        // Line editing characters
+        case 127:  // DEL delete key
+        case '\b': // CTRL(H) backspace
+            // Destructive backspace: remove last character
+            if (inptr > 0)
+            {
+                print("\b \b"); // remove char in raw UI
+                linebuffer[--inptr] = 0;
+            }
+            break;
 
-            case 0x12: //CTRL('R')
-                //Ctrl-R retypes the line
-                print("\r\n");
-                print(linebuffer);
-                break;
+        case 0x12: //CTRL('R')
+            //Ctrl-R retypes the line
+            print("\r\n");
+            print(linebuffer);
+            break;
 
-            case 0x15: //CTRL('U')
-                //Ctrl-U deletes the entire line and starts over.
-                println("XXX");
-                resetBuffer();
-                break;
+        case 0x15: //CTRL('U')
+            //Ctrl-U deletes the entire line and starts over.
+            println("XXX");
+            resetBuffer();
+            break;
 
-            case ';':   // BLE monitor apps don't let you add '\r' to a string,
+        case ';': // BLE monitor apps don't let you add '\r' to a string,
             // so ';' ends a command
 
-            case '\r':  //CTRL('M') carriage return (or "Enter" key)
-                // raw input only sends "return" for the keypress
-                // line is complete
-                println();     // Echo newline too.
-                bufferReady = true;
-                break;
+        case '\r': //CTRL('M') carriage return (or "Enter" key)
+            // raw input only sends "return" for the keypress
+            // line is complete
+            println(); // Echo newline too.
+            bufferReady = true;
+            break;
 
-            case '\n':  //CTRL('J') linefeed
-                // ignore newline as 'raw' terminals may not send it.
-                // Serial Monitor sends a "\r\n" pair by default
-                break;
+        case '\n': //CTRL('J') linefeed
+            // ignore newline as 'raw' terminals may not send it.
+            // Serial Monitor sends a "\r\n" pair by default
+            break;
 
-            default:
-                // Otherwise, echo the character and append it to the buffer
-                linebuffer[inptr++] = c;
-                write(c);
-                if (inptr >= SIMPLE_SERIAL_SHELL_BUFSIZE-1) {
-                    bufferReady = true; // flush to avoid overflow
-                }
-                break;
+        default:
+            // Otherwise, echo the character and append it to the buffer
+            linebuffer[inptr++] = c;
+            write(c);
+            if (inptr >= SIMPLE_SERIAL_SHELL_BUFSIZE - 1)
+            {
+                bufferReady = true; // flush to avoid overflow
+            }
+            break;
         }
     } while (moreData && !bufferReady);
 
@@ -194,13 +197,13 @@ int SimpleSerialShell::execute(const char commandString[])
 //////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::execute(void)
 {
-    char * argv[MAXARGS] = {0};
+    char *argv[MAXARGS] = {0};
     linebuffer[SIMPLE_SERIAL_SHELL_BUFSIZE - 1] = '\0'; // play it safe
     int argc = 0;
 
-    char * rest = NULL;
-    const char * whitespace = " \t\r\n";
-    char * commandName = strtok_r(linebuffer, whitespace, &rest);
+    char *rest = NULL;
+    const char *whitespace = " \t\r\n";
+    char *commandName = strtok_r(linebuffer, whitespace, &rest);
 
     if (!commandName)
     {
@@ -211,12 +214,15 @@ int SimpleSerialShell::execute(void)
     }
     argv[argc++] = commandName;
 
-    for ( ; argc < MAXARGS; )
+    for (; argc < MAXARGS;)
     {
-        char * anArg = strtok_r(0, whitespace, &rest);
-        if (anArg) {
+        char *anArg = strtok_r(0, whitespace, &rest);
+        if (anArg)
+        {
             argv[argc++] = anArg;
-        } else {
+        }
+        else
+        {
             // no more arguments
             return execute(argc, argv);
         }
@@ -226,18 +232,38 @@ int SimpleSerialShell::execute(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+int SimpleSerialShell::CommandEntry::compareName(const char *aName) const
+{
+    const String myNameString(name);
+    int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
+    return comparison;
+};
+
+//////////////////////////////////////////////////////////////////////////////
+int SimpleSerialShell::CommandEntry::execute(int argc, char **argv) const
+{
+    return myFunc(argc, argv);
+};
+
+//////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::execute(int argc, char **argv)
 {
     m_lastErrNo = 0;
-    for ( int i = 0; i < numTableEntries; i++) {
-        if (aCmd->compareName(argv[0]) == 0) {
-            m_lastErrNo = aCmd->execute(argc, argv);
+    for (int i = 0; i < numTableEntries; i++)
+    {
+        auto &tableEntry = commandTable[i];
+        //Command aCmd(tableEntry.name, tableEntry.f);
+        if (tableEntry.compareName(argv[0]) == 0)
+        {
+            m_lastErrNo = tableEntry.execute(argc, argv);
             resetBuffer();
             return m_lastErrNo;
         }
     }
-    for ( Command * aCmd = firstCommand; aCmd != NULL; aCmd = aCmd->next) {
-        if (aCmd->compareName(argv[0]) == 0) {
+    for (Command *aCmd = firstCommand; aCmd != NULL; aCmd = aCmd->next)
+    {
+        if (aCmd->compareName(argv[0]) == 0)
+        {
             m_lastErrNo = aCmd->execute(argc, argv);
             resetBuffer();
             return m_lastErrNo;
@@ -257,13 +283,14 @@ int SimpleSerialShell::lastErrNo(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int SimpleSerialShell::report(const __FlashStringHelper * constMsg, int errorCode)
+int SimpleSerialShell::report(const __FlashStringHelper *constMsg, int errorCode)
 {
     if (errorCode != EXIT_SUCCESS)
     {
         String message(constMsg);
         print(errorCode);
-        if (message[0] != '\0') {
+        if (message[0] != '\0')
+        {
             print(F(": "));
             println(message);
         }
@@ -286,14 +313,14 @@ void SimpleSerialShell::resetBuffer(void)
 int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
 {
     shell.println(F("Commands available are:"));
-    auto aCmd = firstCommand;  // first in list of commands.
+    auto aCmd = firstCommand; // first in list of commands.
     while (aCmd)
     {
         shell.print(F("  "));
         shell.println(aCmd->name);
         aCmd = aCmd->next;
     }
-    return 0;	// OK or "no errors"
+    return 0; // OK or "no errors"
 }
 
 ///////////////////////////////////////////////////////////////
@@ -301,9 +328,8 @@ int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
 //
 size_t SimpleSerialShell::write(uint8_t aByte)
 {
-    return shellConnection ?
-           shellConnection->write(aByte)
-           : 0;
+    return shellConnection ? shellConnection->write(aByte)
+                           : 0;
 }
 
 int SimpleSerialShell::available()
