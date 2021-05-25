@@ -263,7 +263,7 @@ void SimpleSerialShell::resetBuffer(void)
 // SimpleSerialShell::printHelp() is a static method.
 // printHelp() can access the linked list of commands.
 //
-int SimpleSerialShell::printHelp(int argc, char **argv)
+int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
 {
     shell.println(F("Commands available are:"));
     auto aCmd = firstCommand;  // first in list of commands.
