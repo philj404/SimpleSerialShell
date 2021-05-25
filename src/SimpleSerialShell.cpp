@@ -254,7 +254,7 @@ int SimpleSerialShell::CommandEntry::compareName(int index, const char *aName)
     int comparison =
 #if defined(EPOXY_DUINO)
         // EpoxyDuino doesn't really have PROGMEM; fakes a subset
-        strcasecmp_P
+        strncasecmp
 #else
         strncasecmp_P
 #endif
