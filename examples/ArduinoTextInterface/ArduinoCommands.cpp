@@ -23,7 +23,7 @@ int badArgCount( char * cmdName )
 //
 struct lookupVals
 {
-  char * name;
+  const char * name;
   int val;
 };
 

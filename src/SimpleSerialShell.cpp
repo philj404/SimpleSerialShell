@@ -251,7 +251,14 @@ const __FlashStringHelper *SimpleSerialShell::CommandEntry::getName(int index)
 int SimpleSerialShell::CommandEntry::compareName(int index, const char *aName)
 {
     const char * name_P = (const char *) getName(index); // in PROGMEM
-    int comparison = strncasecmp_P(aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
+    int comparison =
+#ifdef EXPOXY_DUINO
+        // EpoxyDuino doesn't really have PROGMEM
+        strncasecmp
+#else
+        strncasecmp_P
+#endif
+          (aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
     return -comparison; // swap sense of comparison
 };
 
