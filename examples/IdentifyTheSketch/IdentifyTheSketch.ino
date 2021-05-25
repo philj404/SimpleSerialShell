@@ -12,6 +12,7 @@
 int showID(int argc = 0, char**argv = NULL)
 {
     shell.println(F( "Running " __FILE__ ", Built " __DATE__));
+    return 0;
 };
 
 
