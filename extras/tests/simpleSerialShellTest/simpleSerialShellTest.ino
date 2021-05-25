@@ -251,7 +251,7 @@ testF(ShellTest, delete) {
 
 //////////////////////////////////////////////////////////////////////////////
 // ... so which sketch is this?
-int showID(int argc = 0, char **argv = NULL)
+int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
 {
     Serial.println();
     Serial.println(F( "Running " __FILE__ ", Built " __DATE__));
