@@ -13,41 +13,47 @@ SimpleSerialShell shell;
 
 //
 SimpleSerialShell::Command *SimpleSerialShell::firstCommand = NULL;
-const SimpleSerialShell::CommandEntry *SimpleSerialShell::commandTable = (const SimpleSerialShell::CommandEntry *)NULL;
+const SimpleSerialShell::CommandEntry *SimpleSerialShell::commandTable = NULL;
 int SimpleSerialShell::numTableEntries = 0;
-//SimpleSerialShell::numTableEntries(0);
 
 ////////////////////////////////////////////////////////////////////////////////
 /*!
  *  @brief associates a named command with the function to call.
  */
-class SimpleSerialShell::Command {
-    public:
-        Command(const __FlashStringHelper * n, CommandFunction f):
-            name(n), myFunc(f) {};
+class SimpleSerialShell::Command
+{
+public:
+    Command(const __FlashStringHelper *n, CommandFunction f) : name(n), myFunc(f){};
 
-        int execute(int argc, char **argv)
-        {
+    int execute(int argc, char **argv)
+    {
+        if (myFunc)
             return myFunc(argc, argv);
-        };
+        return 8;
+    };
 
-        // to sort commands
-        int compare(const Command * other) const
-        {
-            const String otherNameString(other->name);
-            return compareName(otherNameString.c_str());
-        };
+    // to sort commands
+    int compare(const Command *other) const
+    {
+        const String otherNameString(other->name);
+        return compareName(otherNameString.c_str());
+    };
 
-        int compareName(const char * aName) const
-        {
-            const String myNameString(name);
-            int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
-            return comparison;
-        };
+    int compareName(const char *aName) const
+    {
+        const String myNameString(name);
+        int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
+        return comparison;
+    };
 
-        const __FlashStringHelper * name;
-        CommandFunction myFunc;
-        Command * next;
+    String getName(void) const
+    {
+        return String((__FlashStringHelper *)name);
+    }
+
+    const __FlashStringHelper *name;
+    CommandFunction myFunc;
+    Command *next;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,32 +238,52 @@ int SimpleSerialShell::execute(void)
 }
 
 //////////////////////////////////////////////////////////////////////////////
-int SimpleSerialShell::CommandEntry::compareName(const char *aName) const
+const __FlashStringHelper *SimpleSerialShell::CommandEntry::getName(int index)
+//String SimpleSerialShell::CommandEntry::getName(int index)
 {
-    const String myNameString(name);
-    int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
-    return comparison;
+    auto nameInProgmem = &(commandTable[index].name);
+    __FlashStringHelper *
+        fshName = (__FlashStringHelper *)pgm_read_ptr(nameInProgmem);
+    return fshName;
 };
 
 //////////////////////////////////////////////////////////////////////////////
-int SimpleSerialShell::CommandEntry::execute(int argc, char **argv) const
+int SimpleSerialShell::CommandEntry::compareName(int index, const char *aName)
 {
-    return myFunc(argc, argv);
+    const char * name_P = (const char *) getName(index); // in PROGMEM
+    int comparison = strncasecmp_P(aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
+    return -comparison; // swap sense of comparison
+};
+
+//////////////////////////////////////////////////////////////////////////////
+SimpleSerialShell::CommandFunction SimpleSerialShell::CommandEntry::getFunction(int index)
+{
+    auto functionInProgmem = &(commandTable[index].myFunc);
+    return (CommandFunction)pgm_read_ptr(functionInProgmem);
+};
+
+//////////////////////////////////////////////////////////////////////////////
+int SimpleSerialShell::CommandEntry::execute(int index, int argc, char **argv)
+{
+    auto function = getFunction(index);
+
+    if (function)
+        return function(argc, argv);
+    else
+        return 8;
 };
 
 //////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::execute(int argc, char **argv)
 {
     m_lastErrNo = 0;
+    bool didIt = false;
     for (int i = 0; i < numTableEntries; i++)
     {
-        auto &tableEntry = commandTable[i];
-        //Command aCmd(tableEntry.name, tableEntry.f);
-        if (tableEntry.compareName(argv[0]) == 0)
+        if (CommandEntry::compareName(i, argv[0]) == 0)
         {
-            m_lastErrNo = tableEntry.execute(argc, argv);
-            resetBuffer();
-            return m_lastErrNo;
+            m_lastErrNo = CommandEntry::execute(i, argc, argv);
+            didIt = true;
         }
     }
     for (Command *aCmd = firstCommand; aCmd != NULL; aCmd = aCmd->next)
@@ -265,10 +291,14 @@ int SimpleSerialShell::execute(int argc, char **argv)
         if (aCmd->compareName(argv[0]) == 0)
         {
             m_lastErrNo = aCmd->execute(argc, argv);
-            resetBuffer();
-            return m_lastErrNo;
+            didIt = true;
         }
     }
+    if (didIt) {
+        resetBuffer();
+        return m_lastErrNo;
+    }
+    // else
     print(F("\""));
     print(argv[0]);
     print(F("\": "));
@@ -313,11 +343,24 @@ void SimpleSerialShell::resetBuffer(void)
 int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
 {
     shell.println(F("Commands available are:"));
+    // array commands
+    shell.print(numTableEntries);
+    shell.println(F(" table entries:"));
+
+    for (int i = 0; i < numTableEntries; i++)
+    {
+        shell.print(F("  "));
+        // commandTable is in PROGMEM (not RAM),
+        // so getting entries needs finesse
+        shell.println(CommandEntry::getName(i));
+    }
+
     auto aCmd = firstCommand; // first in list of commands.
+    shell.println(F("linked list entries:"));
     while (aCmd)
     {
         shell.print(F("  "));
-        shell.println(aCmd->name);
+        shell.println(aCmd->getName());
         aCmd = aCmd->next;
     }
     return 0; // OK or "no errors"

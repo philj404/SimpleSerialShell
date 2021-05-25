@@ -33,21 +33,18 @@ public:
     //void addCommand(const char * name, CommandFunction f);
     void addCommand(const __FlashStringHelper *name, CommandFunction f);
 
-    // add commands as one constant table/array
-    //struct CommandEntry {const __FlashStringHelper * name; CommandFunction f;};
+    // add commands as one constant table/array in PROGMEM
     class CommandEntry
     {
     public:
-        //CommandEntry(const __FlashStringHelper name, const CommandFunction f);
-        CommandEntry(const char *PROGMEM _name, const CommandFunction _f)
-            : name(_name), myFunc(_f){};
-        int compareName(const char *aName) const;
-        int execute(int argc, char **argv) const;
+        static int compareName(int index, const char *aName);
+        static int execute(int index, int argc, char **argv);
 
-        //private:
-        const char *PROGMEM name;
-        //const char * name;
-        //const __FlashStringHelper * name;
+        // extract these pointers from PROGMEM address space
+        static const __FlashStringHelper* getName(int index);
+        static CommandFunction getFunction(int index);
+
+        const char *PROGMEM name;   // MUST use special flash memory accessors
         const CommandFunction myFunc;
     };
 
