@@ -23,7 +23,7 @@ int badArgCount( char * cmdName )
 //
 struct lookupVals
 {
-  char * name;
+  const char * name;
   int val;
 };
 
@@ -81,12 +81,12 @@ int analogRead(int argc, char **argv)
 {
   if (argc == 2)
   {
-    auto pin = atoi(argv[1]);
-    if (pin < 0 || pin > NUM_ANALOG_INPUTS)
+    int pin = atoi(argv[1]);
+    if (pin < 0 || pin > (unsigned int) NUM_ANALOG_INPUTS)
     {
-      shell.print("pin ");
+      shell.print(F("pin "));
       shell.print(pin);
-      shell.println(" does not look like an analog pin");
+      shell.println(F(" does not look like an analog pin"));
     }
     auto val = analogRead(pin);
     shell.println(val);
@@ -105,9 +105,9 @@ int analogWrite(int argc, char **argv)
     int pin = atoi(argv[1]);
     if (!digitalPinHasPWM(pin))
     {
-      shell.print("pin ");
+      shell.print(F("pin "));
       shell.print(pin);
-      shell.println(" does not look like an analog output");
+      shell.println(F(" does not look like an analog output"));
     }
     int val = atoi(argv[2]);
 
@@ -129,12 +129,12 @@ int digitalWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (pin < 0 || pin > NUM_DIGITAL_PINS)
     {
-      shell.print("pin ");
+      shell.print(F("pin "));
       shell.print(pin);
-      shell.println(" does not look like a digital pin");
+      shell.println(F(" does not look like a digital pin"));
     }
     auto level = lookup(argv[2], digLevels);
 
@@ -150,12 +150,12 @@ int digitalRead(int argc, char **argv)
 {
   if (argc == 2)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (pin < 0 || pin > NUM_DIGITAL_PINS)
     {
-      shell.print("pin ");
+      shell.print(F("pin "));
       shell.print(pin);
-      shell.println(" does not look like a digital pin");
+      shell.println(F(" does not look like a digital pin"));
     }
     auto val = digitalRead(pin);
     shell.print(val);
