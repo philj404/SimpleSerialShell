@@ -81,8 +81,8 @@ int analogRead(int argc, char **argv)
 {
   if (argc == 2)
   {
-    auto pin = atoi(argv[1]);
-    if (pin < 0 || pin > NUM_ANALOG_INPUTS)
+    int pin = atoi(argv[1]);
+    if (pin < 0 || pin > (unsigned int) NUM_ANALOG_INPUTS)
     {
       shell.print(F("pin "));
       shell.print(pin);
@@ -129,7 +129,7 @@ int digitalWrite(int argc, char **argv)
 {
   if (argc == 3)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (pin < 0 || pin > NUM_DIGITAL_PINS)
     {
       shell.print(F("pin "));
@@ -150,7 +150,7 @@ int digitalRead(int argc, char **argv)
 {
   if (argc == 2)
   {
-    auto pin = atoi(argv[1]);
+    int pin = atoi(argv[1]);
     if (pin < 0 || pin > NUM_DIGITAL_PINS)
     {
       shell.print(F("pin "));
