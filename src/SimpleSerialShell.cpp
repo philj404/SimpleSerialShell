@@ -252,13 +252,12 @@ int SimpleSerialShell::CommandEntry::compareName(int index, const char *aName)
 {
     const char * name_P = (const char *) getName(index); // in PROGMEM
     int comparison =
-#if defined(EPOXY_DUINO)
-        // EpoxyDuino doesn't really have PROGMEM; fakes a subset
-        strncasecmp
+#if defined(EPOXY_DUINO) || defined(ARDUINO_ARCH_SAMD)
+        // doesn't really have PROGMEM; fakes a subset
+        strncasecmp (aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
 #else
-        strncasecmp_P
+        strncasecmp_P (aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
 #endif
-          (aName, name_P, SIMPLE_SERIAL_SHELL_BUFSIZE);
     return -comparison; // swap sense of comparison
 };
 

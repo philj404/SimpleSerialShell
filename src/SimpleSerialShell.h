@@ -44,7 +44,11 @@ public:
         static const __FlashStringHelper* getName(int index);
         static CommandFunction getFunction(int index);
 
+#if defined(ESP8266)
+        const char * name;   // only partial flash emulation
+#else
         const char *PROGMEM name;   // MUST use special flash memory accessors
+#endif
         const CommandFunction myFunc;
     };
 
