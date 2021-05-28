@@ -115,7 +115,9 @@ int dumpAMemory(int argc, char **argv)
                 b = allRam[j];
             }
             if (dumpingEEPROM) {
+#if !defined(ARDUINO_ARCH_SAMD)
                 b = EEPROM.read(i + j);
+#endif
             }
             aLine[j] = b;
         }
