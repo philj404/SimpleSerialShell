@@ -7,7 +7,7 @@
 #include <SimpleSerialShell.h>
 #include "ArduinoCommands.h"
 
-#ifndef __SAMD51__
+#ifndef ARDUINO_ARCH_SAMD
 #include <EEPROM.h>
 #endif
 
@@ -88,8 +88,8 @@ int dumpAMemory(int argc, char **argv)
 
     int end = begin + rowSize;
     if (dumpingEEPROM) {
-#if defined(__SAMD51__)
-        shell.print(F("EEPROM not supported on this processor"))
+#if defined(ARDUINO_ARCH_SAMD)
+        shell.print(F("EEPROM not supported on this processor"));
         return checkSyntax();
 #else
         end = (unsigned) EEPROM.length();   // default do all EEPROM
@@ -127,7 +127,7 @@ int dumpAMemory(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 int addMemoryCommands(SimpleSerialShell & shell)
 {
-#if !defined(__SAMD51__)
+#if !defined(ARDUINO_ARCH_SAMD)
     shell.addCommand(F("eeprom?"), dumpAMemory);
 #endif
     shell.addCommand(F("ram?"), dumpAMemory);

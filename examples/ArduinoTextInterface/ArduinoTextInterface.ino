@@ -37,7 +37,10 @@ void setup() {
 
     addArduinoCommands(shell);
     addMemoryCommands(shell);
+
+#ifndef ARDUINO_ARCH_SAMD
     addStackHeapCommands(shell);
+#endif
 
 #ifdef WITH_MEMORY_USAGE
     addMemoryUsageCommands(shell);  //MemoryUsage library
