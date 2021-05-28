@@ -82,7 +82,7 @@ int analogRead(int argc, char **argv)
   if (argc == 2)
   {
     int pin = atoi(argv[1]);
-    if (pin < 0 || pin > (unsigned int) NUM_ANALOG_INPUTS)
+    if (pin < 0 || pin > (int) NUM_ANALOG_INPUTS)
     {
       shell.print(F("pin "));
       shell.print(pin);
