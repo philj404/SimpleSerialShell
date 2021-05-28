@@ -6,8 +6,10 @@
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 #include "ArduinoCommands.h"
+
+#ifndef __SAMD51__
 #include <EEPROM.h>
-#include <Streaming.h>
+#endif
 
 static int checkSyntax(void)
 {
@@ -66,102 +68,6 @@ void prettyPrintChars(int lineNo, const char *chars, int numChars)
 
 static const int rowSize = 0x10;
 
-#ifdef SPECIALIZED_DUMPS
-////////////////////////////////////////////////////////////////////////////////
-int dumpEEPROM(int argc, char **argv)
-{
-    char aLine[rowSize];
-    int begin = 0;
-
-    if (argc > 1) {
-        begin = parseAsHex(argv[1]);    // start address
-        if (begin < 0) {
-            return checkSyntax();
-        }
-    }
-
-    int end = (unsigned) EEPROM.length();
-    if (argc > 2) {
-        int numBytes = parseAsHex(argv[2]);
-        if (numBytes < 0) {
-            return checkSyntax();
-        }
-        end = begin + numBytes;
-    }
-    for (int i = begin; i < end; i += rowSize) {
-        for (int j = 0; j < rowSize; j++) {  // hex values
-            char b = EEPROM.read(i + j);
-            aLine[j] = b;
-        }
-        prettyPrintChars(i, aLine, rowSize);
-    }
-    return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int dumpRam(int argc, char **argv)
-{
-    char aLine[rowSize];
-    int begin = 0;
-
-    if (argc > 1) {
-        begin = parseAsHex(argv[1]);    // start address
-        if (begin < 0) {
-            return checkSyntax();
-        }
-    }
-
-    int end = begin + rowSize;
-    if (argc > 2) {
-        int numBytes = parseAsHex(argv[2]);
-        if (numBytes < 0) {
-            return checkSyntax();
-        }
-        end = begin + numBytes;
-    }
-    for (int i = begin; i < end; i += rowSize) {
-        char *allRam = (char *) i;
-        for (int j = 0; j < rowSize; j++) {  // hex values
-            char b = allRam[j];
-            aLine[j] = b;
-        }
-        prettyPrintChars(i, aLine, rowSize);
-    }
-    return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int dumpProgmem(int argc, char **argv)
-{
-    char aLine[rowSize];
-    int begin = 0;
-
-    if (argc > 1) {
-        begin = parseAsHex(argv[1]);    // start address
-        if (begin < 0) {
-            return checkSyntax();
-        }
-    }
-
-    int end = begin + rowSize;
-    if (argc > 2) {
-        int numBytes = parseAsHex(argv[2]);
-        if (numBytes < 0) {
-            return checkSyntax();
-        }
-        end = begin + numBytes;
-    }
-    for (int i = begin; i < end; i += rowSize) {
-        for (int j = 0; j < rowSize; j++) {
-            char b = pgm_read_byte(i + j);
-            aLine[j] = b;
-        }
-        prettyPrintChars(i, aLine, rowSize);
-    }
-    return 0;
-}
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////
 // displaying any kind of memory is pretty similar, even if access is different
 //
@@ -182,7 +88,12 @@ int dumpAMemory(int argc, char **argv)
 
     int end = begin + rowSize;
     if (dumpingEEPROM) {
+#if defined(__SAMD51__)
+        shell.print(F("EEPROM not supported on this processor"))
+        return checkSyntax();
+#else
         end = (unsigned) EEPROM.length();   // default do all EEPROM
+#endif
     }
     if (argc > 2) {
         int numBytes = parseAsHex(argv[2]);
@@ -216,7 +127,9 @@ int dumpAMemory(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 int addMemoryCommands(SimpleSerialShell & shell)
 {
+#if !defined(__SAMD51__)
     shell.addCommand(F("eeprom?"), dumpAMemory);
+#endif
     shell.addCommand(F("ram?"), dumpAMemory);
     shell.addCommand(F("progmem?"), dumpAMemory);
     return 0;
