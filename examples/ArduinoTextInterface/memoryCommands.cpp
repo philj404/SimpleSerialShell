@@ -1,5 +1,5 @@
-// EEPROMCommands.cpp
-// Basic support for reading/writing Arduino EEPROM data
+// memoryCommands.cpp
+// Basic support for reading/writing Arduino RAM/PROGMEM/EEPROM data
 // through a serial command line interface
 //
 ////////////////////////////////////////////////////////////////////////////////
