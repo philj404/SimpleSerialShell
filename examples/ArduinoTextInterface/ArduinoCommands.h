@@ -4,7 +4,6 @@
 
 extern int addArduinoCommands(SimpleSerialShell &shell);
 extern int addMemoryCommands(SimpleSerialShell &shell);
-extern int addStackHeapCommands(SimpleSerialShell &shell);
 
 // OPTIONAL: requires the MemoryUsage library
 //#define WITH_MEMORY_USAGE
