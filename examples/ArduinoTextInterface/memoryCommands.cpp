@@ -76,7 +76,9 @@ int dumpAMemory(int argc, char **argv)
 {
     const char dumperNameStarts = tolower(argv[0][0]);
     bool dumpingRAM = (dumperNameStarts == 'r');
+#ifdef AVR
     bool dumpingEEPROM = (dumperNameStarts == 'e');
+#endif
     bool dumpingPROGMEM = (dumperNameStarts == 'p');
 
     int begin = 0;

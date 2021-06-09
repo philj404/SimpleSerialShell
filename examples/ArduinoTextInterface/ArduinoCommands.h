@@ -4,7 +4,10 @@
 
 extern int addArduinoCommands(SimpleSerialShell &shell);
 extern int addMemoryCommands(SimpleSerialShell &shell);
+
+#ifdef ARM
 extern int addStackHeapCommands(SimpleSerialShell &shell);
+#endif
 
 //#define USE_COMMAND_TABLE
 
