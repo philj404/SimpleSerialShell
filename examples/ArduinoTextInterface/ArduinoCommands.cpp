@@ -6,7 +6,7 @@
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 #include "ArduinoCommands.h"
-#include <Streaming.h>
+//#include <Streaming.h>
 
 // see Arduino.h and pins_arduino.h for useful declarations.
 
@@ -51,11 +51,11 @@ int lookup(const char * aName, const lookupVals entries[])
 {
     int i = 0;
     String name(aName);
-    Serial << F("looking up \"") << name << F("\"") << endl;
+    //Serial << F("looking up \"") << name << F("\"") << endl;
     for (; entries[i].name_pp; i++)
     {
-        Serial << F(" i = ") << i
-               << F(" comparing against ") << entries[i].getName() << endl;
+        //Serial << F(" i = ") << i
+        //       << F(" comparing against ") << entries[i].getName() << endl;
         //if (strncasecmp(aName, entries[i].name, 20) == 0) {
         if (name.equalsIgnoreCase(entries[i].getName())) {
             auto aVal = entries[i].getVal();
@@ -65,7 +65,7 @@ int lookup(const char * aName, const lookupVals entries[])
         }
     }
     auto v = entries[0].getVal();
-    Serial << "giving up; using" << v << endl;
+    //Serial << "giving up; using" << v << endl;
     return v;
 }
 

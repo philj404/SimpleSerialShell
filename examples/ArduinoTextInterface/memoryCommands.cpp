@@ -7,7 +7,7 @@
 #include <SimpleSerialShell.h>
 #include "ArduinoCommands.h"
 #include <EEPROM.h>
-#include <Streaming.h>
+//#include <Streaming.h>
 
 static int checkSyntax(void)
 {
