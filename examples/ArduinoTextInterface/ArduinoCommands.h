@@ -9,7 +9,7 @@ extern int addStackHeapCommands(SimpleSerialShell &shell);
 //#define USE_COMMAND_TABLE
 
 // OPTIONAL: requires the MemoryUsage library
-#define WITH_MEMORY_USAGE
+//#define WITH_MEMORY_USAGE
 #if defined(WITH_MEMORY_USAGE)
 extern int addMemoryUsageCommands(SimpleSerialShell &shell);
 #else
