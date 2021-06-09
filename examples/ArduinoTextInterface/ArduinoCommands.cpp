@@ -28,7 +28,11 @@ int badArgCount( char * cmdName )
 //
 struct lookupVals
 {
+#ifdef AVR
     const char * PROGMEM name_pp;
+#else
+    const char * name_pp;
+#endif
     //const __FlashStringHelper *name;
     int val;
     String getName(void) const
@@ -59,7 +63,7 @@ int lookup(const char * aName, const lookupVals entries[])
         //if (strncasecmp(aName, entries[i].name, 20) == 0) {
         if (name.equalsIgnoreCase(entries[i].getName())) {
             auto aVal = entries[i].getVal();
-            Serial << F("found entry: ") << aVal << endl;
+            //Serial << F("found entry: ") << aVal << endl;
             return aVal;
             break;
         }

@@ -106,7 +106,7 @@ int dumpAMemory(int argc, char **argv)
         for (int j = 0; j < rowSize; j++) {
             char b = 0;
             if (dumpingPROGMEM) {
-                b = pgm_read_byte(i + j);
+                b = pgm_read_byte( (void *) (i + j));
             }
             if (dumpingRAM) {
                 const char *allRam = (char *) i;
