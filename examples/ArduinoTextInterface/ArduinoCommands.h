@@ -5,10 +5,13 @@
 extern int addArduinoCommands(SimpleSerialShell &shell);
 extern int addMemoryCommands(SimpleSerialShell &shell);
 
+#ifdef AVR
+extern int addStackHeapCommands(SimpleSerialShell &shell);
+#endif
+
 // OPTIONAL: requires the MemoryUsage library
 //#define WITH_MEMORY_USAGE
 #if defined(WITH_MEMORY_USAGE)
-//#include <MemoryUsage.h>
 extern int addMemoryUsageCommands(SimpleSerialShell &shell);
 #else
 #define STACK_COMPUTE /* do nothing; MemoryUsage library not included */

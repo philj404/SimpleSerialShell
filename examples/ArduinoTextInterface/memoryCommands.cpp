@@ -1,15 +1,16 @@
 // memoryCommands.cpp
-// Basic support for reading/writing Arduino RAM/PROGMEM/EEPROM data
+// Basic support for reading Arduino RAM/PROGMEM/EEPROM data
 // through a serial command line interface
 //
 ////////////////////////////////////////////////////////////////////////////////
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 #include "ArduinoCommands.h"
-
-#ifndef ARDUINO_ARCH_SAMD
+#ifdef AVR
 #include <EEPROM.h>
 #endif
+
+//#include <Streaming.h>
 
 static int checkSyntax(void)
 {
@@ -75,7 +76,9 @@ int dumpAMemory(int argc, char **argv)
 {
     const char dumperNameStarts = tolower(argv[0][0]);
     bool dumpingRAM = (dumperNameStarts == 'r');
+#ifdef AVR
     bool dumpingEEPROM = (dumperNameStarts == 'e');
+#endif
     bool dumpingPROGMEM = (dumperNameStarts == 'p');
 
     int begin = 0;
@@ -87,14 +90,11 @@ int dumpAMemory(int argc, char **argv)
     }
 
     int end = begin + rowSize;
+#ifdef AVR
     if (dumpingEEPROM) {
-#if defined(ARDUINO_ARCH_SAMD)
-        shell.print(F("EEPROM not supported on this processor"));
-        return checkSyntax();
-#else
         end = (unsigned) EEPROM.length();   // default do all EEPROM
-#endif
     }
+#endif
     if (argc > 2) {
         int numBytes = parseAsHex(argv[2]);
         if (numBytes < 0) {
@@ -108,17 +108,17 @@ int dumpAMemory(int argc, char **argv)
         for (int j = 0; j < rowSize; j++) {
             char b = 0;
             if (dumpingPROGMEM) {
-                b = pgm_read_byte((const void *) (i + j));
+                b = pgm_read_byte( (void *) (i + j));
             }
             if (dumpingRAM) {
                 const char *allRam = (char *) i;
                 b = allRam[j];
             }
+#ifdef AVR
             if (dumpingEEPROM) {
-#if !defined(ARDUINO_ARCH_SAMD)
                 b = EEPROM.read(i + j);
-#endif
             }
+#endif
             aLine[j] = b;
         }
         prettyPrintChars(i, aLine, rowSize);
@@ -129,7 +129,7 @@ int dumpAMemory(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 int addMemoryCommands(SimpleSerialShell & shell)
 {
-#if !defined(ARDUINO_ARCH_SAMD)
+#ifdef AVR
     shell.addCommand(F("eeprom?"), dumpAMemory);
 #endif
     shell.addCommand(F("ram?"), dumpAMemory);

@@ -29,6 +29,7 @@ void setup() {
         // AND you want to block until there's a connection
         // otherwise the shell can quietly drop output.
     }
+    delay(1000);
 
     //example
     shell.attach(Serial);
@@ -37,6 +38,9 @@ void setup() {
 
     addArduinoCommands(shell);
     addMemoryCommands(shell);
+#ifdef AVR
+    addStackHeapCommands(shell);
+#endif
 
 #ifdef WITH_MEMORY_USAGE
     addMemoryUsageCommands(shell);  //MemoryUsage library
