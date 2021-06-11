@@ -7,7 +7,7 @@
 // https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
 // https://github.com/mpflaga/Arduino-MemoryFree
 // https://github.com/Locoduino/MemoryUsage
-#ifdef ARM
+#ifdef AVR
 #include <Arduino.h>
 #include "ArduinoCommands.h"
 

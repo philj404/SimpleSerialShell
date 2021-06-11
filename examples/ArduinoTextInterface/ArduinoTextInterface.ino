@@ -38,7 +38,7 @@ void setup() {
 
     addArduinoCommands(shell);
     addMemoryCommands(shell);
-#ifdef ARM
+#ifdef AVR
     addStackHeapCommands(shell);
 #endif
 

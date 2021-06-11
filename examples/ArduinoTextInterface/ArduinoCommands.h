@@ -2,14 +2,14 @@
 //
 #include <SimpleSerialShell.h>
 
+//#define USE_COMMAND_TABLE
+
 extern int addArduinoCommands(SimpleSerialShell &shell);
 extern int addMemoryCommands(SimpleSerialShell &shell);
 
-#ifdef ARM
+#ifdef AVR
 extern int addStackHeapCommands(SimpleSerialShell &shell);
 #endif
-
-//#define USE_COMMAND_TABLE
 
 // OPTIONAL: requires the MemoryUsage library
 //#define WITH_MEMORY_USAGE

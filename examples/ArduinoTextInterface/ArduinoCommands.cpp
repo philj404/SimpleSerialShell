@@ -25,6 +25,7 @@ int badArgCount( char * cmdName )
 //
 // NOTE: PROGMEM access to values in this struct
 // is not as simple as it would be in RAM.
+// But const strings in RAM can take significant space.
 //
 struct lookupVals
 {
@@ -33,17 +34,20 @@ struct lookupVals
 #else
     const char * name_pp;
 #endif
-    //const __FlashStringHelper *name;
     int val;
-    String getName(void) const
+    __FlashStringHelper * getNamePtr(void) const
     {
         auto nameInProgmem = &(name_pp);
         __FlashStringHelper * fshName
             = (__FlashStringHelper *)pgm_read_ptr(nameInProgmem);
-
+        return fshName;
+    }
+    String getName(void) const
+    {
+        auto fshName = getNamePtr();
         return String(fshName);
     };
-    int getVal(void) const
+    int getValue(void) const
     {
         auto valInProgmem = &(val);
         return pgm_read_word(valInProgmem);
@@ -56,31 +60,31 @@ int lookup(const char * aName, const lookupVals entries[])
     int i = 0;
     String name(aName);
     //Serial << F("looking up \"") << name << F("\"") << endl;
-    for (; entries[i].name_pp; i++)
+    for (; entries[i].getNamePtr(); i++)
     {
         //Serial << F(" i = ") << i
         //       << F(" comparing against ") << entries[i].getName() << endl;
-        //if (strncasecmp(aName, entries[i].name, 20) == 0) {
         if (name.equalsIgnoreCase(entries[i].getName())) {
-            auto aVal = entries[i].getVal();
+            auto aVal = entries[i].getValue();
             //Serial << F("found entry: ") << aVal << endl;
             return aVal;
             break;
         }
     }
-    auto v = entries[0].getVal();
+    auto v = entries[0].getValue();
     //Serial << "giving up; using" << v << endl;
     return v;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//const char * reverseLookup(int aVal, const lookupVals entries[])
 String reverseLookup(int aVal, const lookupVals entries[])
 {
-    int i = 0;
-    for (; entries[i].name_pp; i++)
+    //Serial << F("Looking up ") << aVal << endl;
+    for (int i = 0; entries[i].getNamePtr(); i++)
     {
-        if (aVal == entries[i].val) {
+        //Serial << F(" i = ") << i
+        //       << F(" comparing against ") << entries[i].getName() << endl;
+        if (aVal == entries[i].getValue()) {
             return entries[i].getName();
             break;
         }
@@ -96,7 +100,7 @@ static const lookupVals modes[] PROGMEM = {
     {input_s, INPUT},
     {output_s, OUTPUT},
     {pullup_s, INPUT_PULLUP},
-    {NULL, INPUT} // default
+    {NULL, INPUT} // end of list
 };
 
 int setPinMode(int argc, char **argv)
@@ -166,7 +170,7 @@ const lookupVals digLevels[] PROGMEM = {
     {high_s, HIGH},
     {zero_s, LOW},
     {one_s, HIGH},
-    {NULL, LOW} // default
+    {NULL, LOW} // end of list
 };
 ////////////////////////////////////////////////////////////////////////////////
 int digitalWrite(int argc, char **argv)
