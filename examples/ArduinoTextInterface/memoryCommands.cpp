@@ -10,8 +10,6 @@
 #include <EEPROM.h>
 #endif
 
-//#include <Streaming.h>
-
 static int checkSyntax(void)
 {
     shell.println(F("check syntax"));

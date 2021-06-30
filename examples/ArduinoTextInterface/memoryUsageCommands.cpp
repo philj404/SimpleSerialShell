@@ -53,40 +53,31 @@ int memoryUsageProbe(int argc = 0, char **argv = NULL)
         }
     }
 
-    // NOTE: MEMORY_PRINT_XXX library macros all print to Serial
+// helpers to print a line of args to shell
 #define PRINT2(a, b) shell.print((a)); shell.println((b));
 #define PRINT2HEX(a, b) shell.print((a)); shell.print((b)); shell.print(F("/0x")); shell.println((b),HEX);
 
-
     if (all)
     {
-        //MEMORY_PRINT_START
         PRINT2HEX(F("Data start: "), getDataStart());
     }
     if (heap || all)
     {
-        //MEMORY_PRINT_HEAPSTART
         PRINT2HEX(F("Heap start: "), getHeapStart());
-        //MEMORY_PRINT_HEAPEND
         PRINT2HEX(F("Heap end: "), getHeapEnd());
-        //MEMORY_PRINT_HEAPSIZE
         PRINT2(F("Heap size: "), getHeapSize());
     }
     if (stack || all)
     {
-        //MEMORY_PRINT_STACKSTART
         PRINT2HEX(F("Stack start: "), getStackStart());
-        //MEMORY_PRINT_END
         PRINT2HEX(F("Stack end: "), getMemoryEnd());
-        //MEMORY_PRINT_STACKSIZE
         PRINT2(F("Stack size: "), getStackSize());
-        //STACK_PRINT
-        PRINT2(F("Stack Maximum Size (Instrumentation method): "), mu_stack_size);
+        PRINT2(F("Stack Max Size (at STACK_COMPUTE): "), maxStackSize);
+        PRINT2(F("    num STACK_COMPUTE checkpoints: "), numStackComputeCalls);
     }
     if (free || all)
     {
-        //FREERAM_PRINT
-        PRINT2(F("Free Ram Size: "), mu_freeRam());
+        PRINT2(F("Free Ram Size: "), getFreeRam());
     }
     if (graphical || all)
     {

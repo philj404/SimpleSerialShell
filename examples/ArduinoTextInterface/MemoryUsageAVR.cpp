@@ -10,13 +10,9 @@
 using namespace MU_AVR;
 
 /// Thanks to adafruit : https://learn.adafruit.com/memories-of-an-arduino/measuring-free-memory
-int MU_AVR::mu_freeRam()
-{
-    return getFreeRam();
-}
 
-int mu_stack_size = getStackSize();
-int numStackComputeCalls = 0;
+int MU_AVR::maxStackSize = getStackSize();
+int MU_AVR::numStackComputeCalls = 0;
 
 // print 1, 2 or 3 items on a line
 #define PRINT1(a) shell.println((a));
