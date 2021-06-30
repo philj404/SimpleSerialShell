@@ -1,5 +1,10 @@
 Release notes
 
+### v0.2.2
+examples/ArduinoTextInterface:
+* Provide memory dump commands for RAM, ROM and EEPROM address spaces.  Very useful for finding/removing constant strings in RAM.
+* Provide memory usage info for RAM consumption (AVR architecture).  Shows global, heap, stack and free memory measurements.
+
 ### v0.2.1
 (for PlatformIO builds) Support changing the default buffer size with a #define.
 
