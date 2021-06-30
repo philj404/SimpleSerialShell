@@ -40,10 +40,7 @@ void setup() {
     addMemoryCommands(shell);
 #ifdef AVR
     addStackHeapCommands(shell);
-#endif
-
-#ifdef WITH_MEMORY_USAGE
-    addMemoryUsageCommands(shell);  //MemoryUsage library
+    addMemoryUsageCommands(shell);  //MemoryUsage (modified library -- no dependency)
 #endif
 
     showID();

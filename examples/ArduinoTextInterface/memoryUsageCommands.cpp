@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include "ArduinoCommands.h"
 
-#if defined(WITH_MEMORY_USAGE)
+#if defined(AVR)
 
-#include <MemoryUsage.h>
+#include "MemoryUsageAVR.h"
+#include <SimpleSerialShell.h>
 
-// declare exactly once
-STACK_DECLARE
+using namespace MU_AVR;
 
 ////////////////////////////////////////////////////////////////////////////////
 // probe memory usage
@@ -14,74 +14,85 @@ STACK_DECLARE
 //
 int memoryUsageProbe(int argc = 0, char **argv = NULL)
 {
-  STACK_COMPUTE // call as needed to probe current stack depth
+    STACK_COMPUTE // call as needed to probe current stack depth
 
-  bool all = false;
-  bool graphical = false;
-  bool heap = false;
-  bool stack = false;
-  bool free = false;
+    bool all = false;
+    bool graphical = false;
+    bool heap = false;
+    bool stack = false;
+    bool free = false;
 
-  if (argc < 2)
-  { // default
-    graphical = true;
-  }
-  else
-  {
-    for (char *flag = argv[1]; *flag != 0; flag++)
-    {
-      switch (*flag)
-      {
-      case 'a': // all
-        all = true;
-        break;
-      case 'h': // heap
-        heap = true;
-        break;
-      case 'g': // graphical
+    if (argc < 2)
+    {   // default
         graphical = true;
-        break;
-      case 's':
-        stack = true;
-        break;
-      case 'f':
-        free = true;
-        break;
-      default:
-        break;
-      }
     }
-  }
+    else
+    {
+        for (char *flagPtr = argv[1]; *flagPtr != 0; flagPtr++)
+        {
+            switch (*flagPtr)
+            {
+                case 'a': // all
+                    all = true;
+                    break;
+                case 'h': // heap
+                    heap = true;
+                    break;
+                case 'g': // graphical
+                    graphical = true;
+                    break;
+                case 's':
+                    stack = true;
+                    break;
+                case 'f':
+                    free = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-  // NOTE: MEMORY_PRINT_XXX library macros all print to Serial
-  
-  if(all)
-  {
-    MEMORY_PRINT_START
-  }
-  if (heap || all)
-  {
-    MEMORY_PRINT_HEAPSTART
-    MEMORY_PRINT_HEAPEND
-    MEMORY_PRINT_HEAPSIZE
-  }
-  if (stack || all)
-  {
-    MEMORY_PRINT_STACKSTART
-    MEMORY_PRINT_END
-    MEMORY_PRINT_STACKSIZE
-    STACK_PRINT
-    //STACKPAINT_PRINT  // I'm not sure I trust paint initialization
-  }
-  if (free || all)
-  {
-    FREERAM_PRINT
-  }
-  if (graphical || all)
-  {
-    SRamDisplay();
-  }
-  return 0;
+    // NOTE: MEMORY_PRINT_XXX library macros all print to Serial
+#define PRINT2(a, b) shell.print((a)); shell.println((b));
+#define PRINT2HEX(a, b) shell.print((a)); shell.print((b)); shell.print(F("/0x")); shell.println((b),HEX);
+
+
+    if (all)
+    {
+        //MEMORY_PRINT_START
+        PRINT2HEX(F("Data start: "), getDataStart());
+    }
+    if (heap || all)
+    {
+        //MEMORY_PRINT_HEAPSTART
+        PRINT2HEX(F("Heap start: "), getHeapStart());
+        //MEMORY_PRINT_HEAPEND
+        PRINT2HEX(F("Heap end: "), getHeapEnd());
+        //MEMORY_PRINT_HEAPSIZE
+        PRINT2(F("Heap size: "), getHeapSize());
+    }
+    if (stack || all)
+    {
+        //MEMORY_PRINT_STACKSTART
+        PRINT2HEX(F("Stack start: "), getStackStart());
+        //MEMORY_PRINT_END
+        PRINT2HEX(F("Stack end: "), getMemoryEnd());
+        //MEMORY_PRINT_STACKSIZE
+        PRINT2(F("Stack size: "), getStackSize());
+        //STACK_PRINT
+        PRINT2(F("Stack Maximum Size (Instrumentation method): "), mu_stack_size);
+    }
+    if (free || all)
+    {
+        //FREERAM_PRINT
+        PRINT2(F("Free Ram Size: "), mu_freeRam());
+    }
+    if (graphical || all)
+    {
+        SRamDisplay();
+    }
+    return 0;
 };
 
 int addMemoryUsageCommands(SimpleSerialShell &shell)
