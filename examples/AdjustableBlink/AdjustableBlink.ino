@@ -9,9 +9,10 @@
 //         "strings together"
 //         (improves readability for very long strings)
 //
-int showID(int argc = 0, char**argv = NULL)
+int showID(int /*argc*/ = 0, char** /*argv*/ = NULL)
 {
     shell.println(F( "Running " __FILE__ ",\nBuilt " __DATE__));
+    return 0;
 };
 
 
@@ -25,7 +26,7 @@ void toggleLED_nb(void)
     static auto lastToggle = millis();  // saved between calls
     auto now = millis();
 
-    if (now - lastToggle > togglePeriod / 2)
+    if (now - lastToggle > (unsigned int) (togglePeriod / 2) )
     {
         // toggle
         digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
@@ -49,7 +50,7 @@ int setTogglePeriod(int argc, char **argv)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int getTogglePeriod(int argc, char **argv)
+int getTogglePeriod(int /*argc*/ , char ** /*argv*/ )
 {
     shell.print("LED toggle period is ");
     shell.print(togglePeriod);
