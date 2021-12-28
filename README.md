@@ -58,6 +58,13 @@ Sending "echo Hello World!" returns "Hello World!" on the serial monitor.
 * **IdentifyTheSketch** -- Example provides an "id?" query which reports the filename and build date of the sketch running.  
 Useful if you forgot what was loaded on this board.
 
+### Alternate Tokenizers
+
+By default, shell input is tokenized using the UNIX standard strtok_r(3) function.  
+This splits user input into space-delimited tokens. There may be applications where 
+a more sophisticated tokenizer is desired. Quoted tokens with internal spaces, for 
+example.  The setTokenizer() method can be used to install a custom tokenizer.
+
 ### Tips
 
 * "help" is a built-in command.  It lists what is available.
