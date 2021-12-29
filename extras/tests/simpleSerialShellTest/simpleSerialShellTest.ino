@@ -250,6 +250,75 @@ testF(ShellTest, delete) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// A demonstration of the alternate tokenizer feature.  Please
+// note that this test runs with an independent shell and an 
+// independent terminal in order to avoid any conflict with global
+// state that appears elsewhere in this library.
+//
+SimpleSerialShell shell2;
+SimMonitor terminal2;
+
+/**
+ * @brief Echoes the parameters of the function with comma-delimiting.
+ * @return int 0 On success, non-zero on error.
+ */
+int echo2(int argc, char **argv) {
+    auto lastArg = argc - 1;
+    for ( int i = 1; i < argc; i++) {
+        shell2.print(argv[i]);
+        if (i < lastArg)
+            shell2.print(F(" "));
+    }
+    shell2.println();
+    return 0;
+}
+
+/**
+ * @brief An alternate tokenizer that uses a comma-delimiter after the 
+ *   initial token has been identified.
+ */
+char* commaTokenizer(char* str, const char*, char** saveptr) {
+    // The first time we tokenize on space so that we can 
+    // pick up the command.  Subsequent calls we tokenize on 
+    // comma.
+    if (str != 0) {
+        return strtok_r(str, " ", saveptr);
+    } else {
+        return strtok_r(str, ",", saveptr);
+    }
+}
+
+testF(ShellTest, altTokenizer) {
+
+    shell2.addCommand(F("echo2"), echo2);
+    shell2.attach(terminal2);
+
+    const char* testCommand = "echo2 test1,test2,test3";
+
+    // Basic sanity check using the current semantics
+    terminal2.pressKeys(testCommand);
+    assertFalse(shell2.executeIfInput());
+    // Flush the user-entry
+    terminal2.getline();
+    terminal2.pressKey('\r');
+    assertTrue(shell2.executeIfInput());
+    // Everything comes back as a single token
+    assertEqual(terminal2.getline(), "\r\ntest1,test2,test3\r\n");
+
+    // Now plug in a new tokenizer that looks for commas instead of spaces
+    shell2.setTokenizer(commaTokenizer);
+    // Send in the same command
+    terminal2.pressKeys(testCommand);
+    assertFalse(shell2.executeIfInput());
+    // Flush the user-entry
+    terminal2.getline();
+    terminal2.pressKey('\r');
+    assertTrue(shell2.executeIfInput());
+    // Notice now that the three tokens were separated
+    assertEqual(terminal2.getline(), "\r\ntest1 test2 test3\r\n");
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // ... so which sketch is this?
 int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
 {

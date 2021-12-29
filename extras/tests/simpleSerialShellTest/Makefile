@@ -1,8 +1,10 @@
-# See https://github.com/bxparks/UnixHostDuino for documentation about this
+# See https://github.com/bxparks/EpoxyDuino for documentation about this
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 #
-
+# NOTE: At the moment there is a dependency on V1.0.0 of the EpoxyDuino 
+# project due to some confusion around end-of-line treatment.  
+#
 APP_NAME := simpleSerialShellTest
 ARDUINO_LIBS := AUnit SimpleSerialShell
 CPPFLAGS += -Werror
-include ../../../../UnixHostDuino/UnixHostDuino.mk
+include ../../../../EpoxyDuino/UnixHostDuino.mk
