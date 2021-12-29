@@ -308,6 +308,7 @@ void SimpleSerialShell::flush()
         shellConnection->flush();
 }
 
-void SimpleSerialShell::setTokenizer(TokenizerFunction f) {
+void SimpleSerialShell::setTokenizer(TokenizerFunction f) 
+{
     tokenizer = f;
 }
