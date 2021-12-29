@@ -255,8 +255,8 @@ testF(ShellTest, delete) {
 // independent terminal in order to avoid any conflict with global
 // state that appears elsewhere in this library.
 //
-SimpleSerialShell shell2;
-SimMonitor terminal2;
+static SimpleSerialShell shell2;
+static SimMonitor terminal2;
 
 /**
  * @brief Echoes the parameters of the function with comma-delimiting.
@@ -290,6 +290,10 @@ char* commaTokenizer(char* str, const char*, char** saveptr) {
 
 testF(ShellTest, altTokenizer) {
 
+    // NB: Even though this command be being added to the shell2 instance, 
+    // the list of commands is held in a static list so it will be visible
+    // in the shell instance as well.  This is the reason why we are 
+    // calling the command "echo2."
     shell2.addCommand(F("echo2"), echo2);
     shell2.attach(terminal2);
 
@@ -305,8 +309,10 @@ testF(ShellTest, altTokenizer) {
     // Everything comes back as a single token
     assertEqual(terminal2.getline(), "\r\ntest1,test2,test3\r\n");
 
-    // Now plug in a new tokenizer that looks for commas instead of spaces
+    // Now plug in a new tokenizer that looks for commas instead of spaces.
+    // This is the main point of this unit test.
     shell2.setTokenizer(commaTokenizer);
+
     // Send in the same command
     terminal2.pressKeys(testCommand);
     assertFalse(shell2.executeIfInput());
