@@ -7,4 +7,5 @@
 APP_NAME := simpleSerialShellTest
 ARDUINO_LIBS := AUnit SimpleSerialShell
 CPPFLAGS += -Werror
-include ../../../../EpoxyDuino/UnixHostDuino.mk
+#include ../../../../EpoxyDuino/UnixHostDuino.mk
+include ../../../../UnixHostDuino/UnixHostDuino.mk
