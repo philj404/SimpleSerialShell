@@ -58,6 +58,12 @@ Sending "echo Hello World!" returns "Hello World!" on the serial monitor.
 * **IdentifyTheSketch** -- Example provides an "id?" query which reports the filename and build date of the sketch running.  
 Useful if you forgot what was loaded on this board.
 
+### Alternate Tokenizers
+
+By default, shell input is tokenized using the UNIX standard strtok_r(3) function.  This splits user input into space-delimited tokens. There may be applications where a more sophisticated tokenizer is desired. Quoted tokens with internal spaces, for example.  The setTokenizer() method can be used to install a custom tokenizer.
+
+A demonstration of this feature can be seen [here](examples/AlternateTokenizer).
+
 ### Tips
 
 * "help" is a built-in command.  It lists what is available.
@@ -72,6 +78,10 @@ a custom stream.
 * To make it easy to switch commands to a different connection, I recommend always
 sending command output to the shell
 (rather than straight to Serial for example).  For example I use `shell.println("motor is off");`
+
+* Please note that the list of commands is shared between instances
+of the SimpleSerialShell (via a static).  The fact that the addCommand() method
+is non-static can be slighly misleading in this regard.
 
 ### Notes
 
