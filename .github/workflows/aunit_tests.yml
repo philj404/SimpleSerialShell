@@ -1,6 +1,6 @@
 name: SimpleSerialShell unit test check
 
-on: [push]
+on: [pull_request, push]
 
 jobs:
   build:
@@ -13,7 +13,8 @@ jobs:
     - name: Setup
       run: |
         cd ..
-        git clone https://github.com/bxparks/UnixHostDuino
+        #git clone https://github.com/bxparks/UnixHostDuino
+        git clone https://github.com/bxparks/EpoxyDuino
         git clone https://github.com/bxparks/AUnit
     #- name: Verify examples
       #run: |
