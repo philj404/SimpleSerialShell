@@ -50,7 +50,8 @@ class SimpleSerialShell::Command {
 ////////////////////////////////////////////////////////////////////////////////
 SimpleSerialShell::SimpleSerialShell()
     : shellConnection(NULL),
-      m_lastErrNo(EXIT_SUCCESS)
+      m_lastErrNo(EXIT_SUCCESS),
+      tokenizer(strtok_r)
 {
     resetBuffer();
 
@@ -187,7 +188,7 @@ int SimpleSerialShell::execute(void)
 
     char * rest = NULL;
     const char * whitespace = " \t\r\n";
-    char * commandName = strtok_r(linebuffer, whitespace, &rest);
+    char * commandName = tokenizer(linebuffer, whitespace, &rest);
 
     if (!commandName)
     {
@@ -200,7 +201,7 @@ int SimpleSerialShell::execute(void)
 
     for ( ; argc < MAXARGS; )
     {
-        char * anArg = strtok_r(0, whitespace, &rest);
+        char * anArg = tokenizer(0, whitespace, &rest);
         if (anArg) {
             argv[argc++] = anArg;
         } else {
@@ -305,4 +306,9 @@ void SimpleSerialShell::flush()
 {
     if (shellConnection)
         shellConnection->flush();
+}
+
+void SimpleSerialShell::setTokenizer(TokenizerFunction f) 
+{
+    tokenizer = f;
 }
