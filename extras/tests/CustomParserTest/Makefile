@@ -1,8 +1,10 @@
 # See https://github.com/bxparks/EpoxyDuino for documentation about this
 # Makefile to compile and run Arduino programs natively on Linux or MacOS.
 #
-# NOTE: At the moment there is a dependency on V1.0.0 of the EpoxyDuino 
-# project due to some confusion around end-of-line treatment.  
+# NOTE: 
+# Brian Parks has renamed the UnixHostDunio library to EpoxyDuino so at some
+# point this will need ot be changed to:
+# include ../../../../EpoxyDuino/UnixHostDuino.mk
 #
 APP_NAME := CustomParserTest
 ARDUINO_LIBS := AUnit SimpleSerialShell
