@@ -16,8 +16,8 @@
 
 using namespace aunit;
 
-//#define NEW_LINE "\r\n"
-#define NEW_LINE "\n"
+#define NEW_LINE "\r\n"
+//#define NEW_LINE "\n"
 
 // A mock of the Arduino Serial stream
 static SimMonitor terminal;
