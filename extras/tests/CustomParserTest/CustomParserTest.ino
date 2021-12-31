@@ -16,6 +16,7 @@
 
 using namespace aunit;
 
+// some platforms ouput line endings differently.
 #define NEW_LINE "\r\n"
 //#define NEW_LINE "\n"
 
