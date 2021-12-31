@@ -86,7 +86,8 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Everything comes back as a single token
-    assertEqual(terminal.getline(), "\r\ntest1,test2,test3\r\n");
+    //assertEqual(terminal.getline(), "\r\ntest1,test2,test3\r\n");
+    assertEqual(terminal.getline(), "\ntest1,test2,test3\n");
 
     // Now plug in a new tokenizer that looks for commas instead of spaces.
     // This is the main point of this unit test.
@@ -100,7 +101,8 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Notice now that the three tokens were separated
-    assertEqual(terminal.getline(), "\r\ntest1 test2 test3\r\n");
+    //assertEqual(terminal.getline(), "\r\ntest1 test2 test3\r\n");
+    assertEqual(terminal.getline(), "\ntest1 test2 test3\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////
