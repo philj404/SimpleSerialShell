@@ -1,8 +1,8 @@
 Release notes
 
 ### v0.2.3
-Support custom tokenizers, for example to quote text with spaces.
-Clean up miscellaneous warnings
+* Support custom tokenizers, for example to quote text with spaces.
+* Clean up miscellaneous warnings
 
 ### v0.2.2
 examples/ArduinoTextInterface:
