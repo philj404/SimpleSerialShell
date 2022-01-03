@@ -20,8 +20,8 @@ SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
  */
 class SimpleSerialShell::Command {
     public:
-        Command(const __FlashStringHelper * n, CommandFunction f):
-            name(n), myFunc(f) {};
+        Command(const __FlashStringHelper * n, const __FlashStringHelper * d, CommandFunction f):
+            name(n), argDocs(d), myFunc(f) {};
 
         int execute(int argc, char **argv)
         {
@@ -42,9 +42,30 @@ class SimpleSerialShell::Command {
             return comparison;
         };
 
-        const __FlashStringHelper * name;
-        CommandFunction myFunc;
+        /**
+         * @brief Writes the documentation associated with this command.
+         * 
+         * @param str Stream to write into.
+         */
+        void renderDocumentation(Stream& str) const
+        {
+            str.print(F("  "));
+            str.print(name);
+            if (argDocs != NULL) {
+                str.print(F(" "));
+                str.print(argDocs);
+            }
+            str.println();
+        }
+
         Command * next;
+
+    private:
+
+        const __FlashStringHelper * const name;
+        // Optional text documentation, or NULL
+        const __FlashStringHelper * const argDocs;
+        const CommandFunction myFunc;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +84,13 @@ SimpleSerialShell::SimpleSerialShell()
 void SimpleSerialShell::addCommand(
     const __FlashStringHelper * name, CommandFunction f)
 {
-    auto * newCmd = new Command(name, f);
+    addCommand(name, NULL, f);
+}
+
+void SimpleSerialShell::addCommand(
+    const __FlashStringHelper * name, const __FlashStringHelper * argDocs, CommandFunction f)
+{
+    auto * newCmd = new Command(name, argDocs, f);
 
     // insert in list alphabetically
     // from stackoverflow...
@@ -270,8 +297,7 @@ int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
     auto aCmd = firstCommand;  // first in list of commands.
     while (aCmd)
     {
-        shell.print(F("  "));
-        shell.println(aCmd->name);
+        aCmd->renderDocumentation(shell);
         aCmd = aCmd->next;
     }
     return 0;	// OK or "no errors"

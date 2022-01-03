@@ -24,8 +24,16 @@ class SimpleSerialShell : public Stream {
         // Unix-style (from 1970!)
         // functions must have a signature like: "int hello(int argc, char ** argv)"
         typedef int (*CommandFunction)(int, char ** );
-        //
-        //void addCommand(const char * name, CommandFunction f);
+
+        /**
+         * @brief Registers a command with the shell processor.
+         * 
+         * @param name Command name (single token)
+         * @param argDocs Optional documentation that describes comment arguments, or NULL
+         * @param f The command function
+         */
+        void addCommand(const __FlashStringHelper * name, const __FlashStringHelper * argDocs, 
+            CommandFunction f);
         void addCommand(const __FlashStringHelper * name, CommandFunction f);
 
         void attach(Stream & shellSource);
