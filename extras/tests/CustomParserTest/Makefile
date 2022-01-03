@@ -6,7 +6,7 @@
 # point this will need ot be changed to:
 # include ../../../../EpoxyDuino/UnixHostDuino.mk
 #
-APP_NAME := simpleSerialShellTest
+APP_NAME := CustomParserTest
 ARDUINO_LIBS := AUnit SimpleSerialShell
 CPPFLAGS += -Werror
 include ../../../../EpoxyDuino/UnixHostDuino.mk

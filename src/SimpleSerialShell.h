@@ -51,6 +51,24 @@ class SimpleSerialShell : public Stream {
         virtual int peek();
         virtual void flush(); // esp32 needs an implementation
 
+        // The function signature of the tokening function.  This is based
+        // on the parameters of the strtok_r(3) function. 
+        // 
+        // Please keep these things in mind when creating your own tokenizer:
+        // * The str parameter is called the first time with the string to be 
+        //   tokenized, and then 0 is passed on subsequent calls.
+        // * The list of allowable delimiters can be changed on subsequent calls.
+        // * The str parameter is modified! 
+        // * saveptr should be treated as an opaque pointer.  Its meaning
+        //   is implementation-specific.
+        //
+        typedef char* (*TokenizerFunction)(char* str, const char* delim, char** saveptr);
+
+        // Call this to change the tokenizer function used internally.  By
+        // default strtok_r() is used, so the use of this funcition is 
+        // optional.
+        void setTokenizer(TokenizerFunction f);
+
     private:
         Stream * shellConnection;
         int m_lastErrNo;
@@ -66,6 +84,8 @@ class SimpleSerialShell : public Stream {
 
         class Command;
         static Command * firstCommand;
+
+        TokenizerFunction tokenizer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
