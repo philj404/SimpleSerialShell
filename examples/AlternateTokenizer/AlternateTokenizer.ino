@@ -134,7 +134,7 @@ int echo(int argc, char **argv) {
 void setup() {
     Serial.begin(115200);
     shell.attach(Serial);
-    shell.addCommand(F("echo"), F("[text tokens]") echo);
+    shell.addCommand(F("echo"), F("[text tokens]"), echo);
     shell.setTokenizer(tokenizer);
 }
 
