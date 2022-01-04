@@ -11,7 +11,7 @@
 
 // These tests depend on the Arduino "AUnit" library
 #include <AUnit.h>
-#include "SimMonitor.h"
+#include "SimulatedStream.h"
 #include <SimpleSerialShell.h>
 
 // Some platforms ouput line endings differently.
@@ -20,11 +20,10 @@
 #define TWO_SPACE "  "
 
 // A mock of the Arduino Serial stream
-static SimMonitor terminal;
+static SimulatedStream<128> terminal;
 
 void prepForTests(void)
 {
-    terminal.init();
     shell.resetBuffer();
 }
 
