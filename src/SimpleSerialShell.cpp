@@ -35,7 +35,7 @@ class SimpleSerialShell::Command {
         // Comparison used for sort commands
         int compare(const Command * other) const
         {
-            String otherNameString(other->nameAndDocs);
+            const String otherNameString(other->nameAndDocs);
             return compareName(otherNameString.c_str());
         };
 
