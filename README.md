@@ -84,7 +84,6 @@ a custom stream.
 sending command output to the shell
 (rather than straight to Serial for example).  For example I use `shell.println("motor is off");`
 
-
 * Please note that the list of commands is shared between instances
 of the SimpleSerialShell (via a static).  The fact that the addCommand() method
 is non-static can be slighly misleading in this regard.
