@@ -28,12 +28,10 @@ class SimpleSerialShell : public Stream {
         /**
          * @brief Registers a command with the shell processor.
          * 
-         * @param name Command name (single token)
-         * @param argDocs Optional documentation that describes comment arguments, or NULL
+         * @param name Command name (single token), with optional documentation 
+         *   delimited by a colon.  
          * @param f The command function
          */
-        void addCommand(const __FlashStringHelper * name, const __FlashStringHelper * argDocs, 
-            CommandFunction f);
         void addCommand(const __FlashStringHelper * name, CommandFunction f);
 
         void attach(Stream & shellSource);

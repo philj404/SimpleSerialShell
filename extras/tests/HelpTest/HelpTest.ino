@@ -79,7 +79,7 @@ void setup() {
 
     shell.addCommand(F("echo"), echo);
     // Register a command with argument documentation (just a string)
-    shell.addCommand(F("range"), F("<lower> <upper>"), rangeCommand);
+    shell.addCommand(F("range:<lower> <upper>"), rangeCommand);
     shell.attach(terminal);
 }
 

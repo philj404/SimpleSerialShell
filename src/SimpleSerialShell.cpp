@@ -1,6 +1,10 @@
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 
+// The character used to separate the command name from its optional
+// documentation.
+#define DOC_DELIMITER ':'
+
 ////////////////////////////////////////////////////////////////////////////////
 /*!
  *  @file SimpleSerialShell.cpp
@@ -20,26 +24,34 @@ SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
  */
 class SimpleSerialShell::Command {
     public:
-        Command(const __FlashStringHelper * n, const __FlashStringHelper * d, CommandFunction f):
-            name(n), argDocs(d), myFunc(f) {};
+        Command(const __FlashStringHelper * n, CommandFunction f):
+            nameAndDocs(n), myFunc(f) {};
 
         int execute(int argc, char **argv)
         {
             return myFunc(argc, argv);
         };
 
-        // to sort commands
+        // Comparison used for sort commands
         int compare(const Command * other) const
         {
-            const String otherNameString(other->name);
+            String otherNameString(other->nameAndDocs);
             return compareName(otherNameString.c_str());
         };
 
         int compareName(const char * aName) const
-        {
-            const String myNameString(name);
-            int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
-            return comparison;
+        {   
+            // Look for the documentation delimiter and make sure we don't 
+            // consider anything beyond it in the comparison.  
+            String work(nameAndDocs);
+            int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
+            for (unsigned int i = 0; i < work.length(); i++) {
+                if (work.charAt(i) == DOC_DELIMITER) {
+                    compareLength = i;
+                    break;
+                }
+            }
+            return strncasecmp(work.c_str(), aName, compareLength);
         };
 
         /**
@@ -50,10 +62,15 @@ class SimpleSerialShell::Command {
         void renderDocumentation(Stream& str) const
         {
             str.print(F("  "));
-            str.print(name);
-            if (argDocs != NULL) {
-                str.print(F(" "));
-                str.print(argDocs);
+            bool seenDelim = false;
+            String work(nameAndDocs);
+            for (unsigned int i = 0; i < work.length(); i++) {
+                if (!seenDelim && work.charAt(i) == DOC_DELIMITER) {
+                    str.print(' ');
+                    seenDelim = true;
+                } else {
+                    str.print(work.charAt(i));
+                }
             }
             str.println();
         }
@@ -62,9 +79,7 @@ class SimpleSerialShell::Command {
 
     private:
 
-        const __FlashStringHelper * const name;
-        // Optional text documentation, or NULL
-        const __FlashStringHelper * const argDocs;
+        const __FlashStringHelper * const nameAndDocs;
         const CommandFunction myFunc;
 };
 
@@ -84,13 +99,7 @@ SimpleSerialShell::SimpleSerialShell()
 void SimpleSerialShell::addCommand(
     const __FlashStringHelper * name, CommandFunction f)
 {
-    addCommand(name, NULL, f);
-}
-
-void SimpleSerialShell::addCommand(
-    const __FlashStringHelper * name, const __FlashStringHelper * argDocs, CommandFunction f)
-{
-    auto * newCmd = new Command(name, argDocs, f);
+    auto * newCmd = new Command(name, f);
 
     // insert in list alphabetically
     // from stackoverflow...
