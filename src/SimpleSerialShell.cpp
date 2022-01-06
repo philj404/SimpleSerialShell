@@ -43,6 +43,11 @@ class SimpleSerialShell::Command {
         {   
             // Look for the documentation delimiter and make sure we don't 
             // consider anything beyond it in the comparison.  
+            //
+            // Note for future consideration: The temporary String here could
+            // be eliminated here by leveraging strlen_P, pgm_read_byte, and 
+            // strncasecmp_P.  That will take a bit of research since 
+            // the header file may have a different name on ESP2886/ESP32.
             String work(nameAndDocs);
             int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
             for (unsigned int i = 0; i < work.length(); i++) {
@@ -63,8 +68,10 @@ class SimpleSerialShell::Command {
         {
             str.print(F("  "));
             bool seenDelim = false;
+            // See notes above about temporary Strings.
             String work(nameAndDocs);
             for (unsigned int i = 0; i < work.length(); i++) {
+                // We hide the delimiter, but only once!
                 if (!seenDelim && work.charAt(i) == DOC_DELIMITER) {
                     str.print(' ');
                     seenDelim = true;
