@@ -70,8 +70,8 @@ A demonstration of this feature can be seen [here](examples/AlternateTokenizer).
 
 * "help" is a built-in command.  It lists what is available.
 
-* If memory limitations allow, provide additional documentation for each command you register using the argDocs parameter of the addCommand() method.  This will make the "help" output more comprehensive and
-may make your device more user-friendly.
+* If memory limitations allow, provide additional documentation for each command you register following a colon delimeter in the addCommand() method.  This will make the "help" output more comprehensive and
+may make your device more user-friendly.  (For example, use `shell.addCommand(F("helloWorld:<start> [<end>]"), hello);` )
 
 * RAM is limited in the ATMega world.  To save space, use the F() macro, which keeps const strings in flash
 rather than copying them to RAM.  (For example use `shell.addCommand(F("helloWorld"), hello);` )
