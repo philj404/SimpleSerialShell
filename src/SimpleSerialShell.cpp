@@ -49,7 +49,7 @@ class SimpleSerialShell::Command {
             int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
             int delim = work.indexOf(' ');
             if (delim >=0) {
-                compareLength = i;
+                compareLength = delim;
             }
             return strncasecmp(work.c_str(), aName, compareLength);
         };
