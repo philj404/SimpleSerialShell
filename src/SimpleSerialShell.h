@@ -28,9 +28,14 @@ class SimpleSerialShell : public Stream {
         /**
          * @brief Registers a command with the shell processor.
          * 
-         * @param name Command name (single token), with optional documentation 
-         *   delimited by a colon.  
-         * @param f The command function
+         * @param name Command name, with optional documentation.  The
+         *   command must be delimited from the rest of the documentation
+         *   using a space, which implies that the command itself cannot 
+         *   contain space characters.  Anything after the initial space 
+         *   delimiter will be treated as documentation for display in 
+         *   the help message.
+         * @param f The command function that will be called when the command 
+         *   is entered into the shell.
          */
         void addCommand(const __FlashStringHelper * name, CommandFunction f);
 

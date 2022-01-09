@@ -1,10 +1,6 @@
 #include <Arduino.h>
 #include <SimpleSerialShell.h>
 
-// The character used to separate the command name from its optional
-// documentation.
-#define DOC_DELIMITER ':'
-
 ////////////////////////////////////////////////////////////////////////////////
 /*!
  *  @file SimpleSerialShell.cpp
@@ -41,8 +37,9 @@ class SimpleSerialShell::Command {
 
         int compareName(const char * aName) const
         {   
-            // Look for the documentation delimiter and make sure we don't 
-            // consider anything beyond it in the comparison.  
+            // Look for the command delimiter and make sure we don't 
+            // consider anything beyond it in the comparison.  There
+            // may be more documentation in the string.
             //
             // Note for future consideration: The temporary String here could
             // be eliminated here by leveraging strlen_P, pgm_read_byte, and 
@@ -51,7 +48,7 @@ class SimpleSerialShell::Command {
             String work(nameAndDocs);
             int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
             for (unsigned int i = 0; i < work.length(); i++) {
-                if (work.charAt(i) == DOC_DELIMITER) {
+                if (work.charAt(i) == ' ') {
                     compareLength = i;
                     break;
                 }
@@ -67,18 +64,7 @@ class SimpleSerialShell::Command {
         void renderDocumentation(Stream& str) const
         {
             str.print(F("  "));
-            bool seenDelim = false;
-            // See notes above about temporary Strings.
-            String work(nameAndDocs);
-            for (unsigned int i = 0; i < work.length(); i++) {
-                // We hide the delimiter, but only once!
-                if (!seenDelim && work.charAt(i) == DOC_DELIMITER) {
-                    str.print(' ');
-                    seenDelim = true;
-                } else {
-                    str.print(work.charAt(i));
-                }
-            }
+            str.print(nameAndDocs);
             str.println();
         }
 

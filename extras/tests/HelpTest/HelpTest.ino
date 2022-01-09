@@ -48,6 +48,10 @@ int echo(int, char **)
     return 0;
 }
 
+// Define a new command, keeping the documentation close by.
+
+const __FlashStringHelper * rangeCommandNameAndDocs = F("range <lower> <upper>");
+
 int rangeCommand(int, char **) 
 {
     return 0;
@@ -78,8 +82,7 @@ void setup() {
     while (!Serial); // for the Arduino Leonardo/Micro only
 
     shell.addCommand(F("echo"), echo);
-    // Register a command with argument documentation (just a string)
-    shell.addCommand(F("range:<lower> <upper>"), rangeCommand);
+    shell.addCommand(rangeCommandNameAndDocs, rangeCommand);
     shell.attach(terminal);
 }
 
