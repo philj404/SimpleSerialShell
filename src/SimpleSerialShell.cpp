@@ -21,30 +21,57 @@ SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;
 class SimpleSerialShell::Command {
     public:
         Command(const __FlashStringHelper * n, CommandFunction f):
-            name(n), myFunc(f) {};
+            nameAndDocs(n), myFunc(f) {};
 
         int execute(int argc, char **argv)
         {
             return myFunc(argc, argv);
         };
 
-        // to sort commands
+        // Comparison used for sort commands
         int compare(const Command * other) const
         {
-            const String otherNameString(other->name);
+            const String otherNameString(other->nameAndDocs);
             return compareName(otherNameString.c_str());
         };
 
         int compareName(const char * aName) const
-        {
-            const String myNameString(name);
-            int comparison = strncasecmp(myNameString.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
-            return comparison;
+        {   
+            // Look for the command delimiter and make sure we don't 
+            // consider anything beyond it in the comparison.  There
+            // may be more documentation in the string.
+            //
+            // Note for future consideration: The temporary String here could
+            // be eliminated here by leveraging strlen_P, pgm_read_byte, and 
+            // strncasecmp_P.  That will take a bit of research since 
+            // the header file may have a different name on ESP2886/ESP32.
+            String work(nameAndDocs);
+            int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
+            int delim = work.indexOf(' ');
+            if (delim >=0) {
+                compareLength = delim;
+            }
+            return strncasecmp(work.c_str(), aName, compareLength);
         };
 
-        const __FlashStringHelper * name;
-        CommandFunction myFunc;
+        /**
+         * @brief Writes the documentation associated with this command.
+         * 
+         * @param str Stream to write into.
+         */
+        void renderDocumentation(Stream& str) const
+        {
+            str.print(F("  "));
+            str.print(nameAndDocs);
+            str.println();
+        }
+
         Command * next;
+
+    private:
+
+        const __FlashStringHelper * const nameAndDocs;
+        const CommandFunction myFunc;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -270,8 +297,7 @@ int SimpleSerialShell::printHelp(int /*argc*/, char ** /*argv*/)
     auto aCmd = firstCommand;  // first in list of commands.
     while (aCmd)
     {
-        shell.print(F("  "));
-        shell.println(aCmd->name);
+        aCmd->renderDocumentation(shell);
         aCmd = aCmd->next;
     }
     return 0;	// OK or "no errors"

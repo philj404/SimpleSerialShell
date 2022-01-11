@@ -75,7 +75,12 @@ void setup() {
     shell.attach(Serial);
     shell.addCommand(F("id?"), showID);
 
+    // adds a basic "echo" command
     shell.addCommand(F("echo"), echo);
+
+    // adds an "echo" command with argument hints for help
+    // nice for complex commands
+    shell.addCommand(F("echoWithHints <wordToEcho> ..."), echo);
 
     showID();
     Serial.println(F("Ready."));
