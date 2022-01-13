@@ -18,7 +18,7 @@
 #define NEW_LINE "\r\n"
 #define HELP_PREAMBLE "Commands available are:"
 #define TWO_SPACE "  "
-#define COMMAND_PROMPT NEW_LINE ">  "
+#define COMMAND_PROMPT NEW_LINE "> "
 
 // A mock of the Arduino Serial stream
 static SimulatedStream<128> terminal;
