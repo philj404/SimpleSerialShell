@@ -28,6 +28,9 @@ using namespace aunit;
 
 SimMonitor terminal;
 
+#define END_LINE "\r\n"
+#define COMMAND_PROMPT END_LINE "> "
+
 void prepForTests(void)
 {
     terminal.init();
@@ -59,7 +62,7 @@ testF(ShellTest, execute) {
     int errNo = shell.lastErrNo();
     assertEqual(errNo, 0);      // OK or no errors
 
-    assertEqual(terminal.getline(), "hello world\r\n");
+    assertEqual(terminal.getline(), "hello world" END_LINE); // no prompt
 
     response = shell.execute("sum 1 2 3");
     assertEqual(response, 6);
@@ -76,7 +79,7 @@ testF(ShellTest, missingCommand) {
     int errNo = shell.lastErrNo();
     assertEqual(errNo, -1);      // OK or no errors
 
-    assertEqual(terminal.getline(), "\"echoNOT\": -1: command not found\r\n");
+    assertEqual(terminal.getline(), "\"echoNOT\": -1: command not found" END_LINE);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -103,7 +106,7 @@ testF(ShellTest, executeIfInput) {
     errNo = shell.lastErrNo();
     assertEqual(errNo, 0);    // OK or no errors
 
-    assertEqual(terminal.getline(), "\r\nhello world\r\n");
+    assertEqual(terminal.getline(), END_LINE "hello world" COMMAND_PROMPT);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -122,7 +125,7 @@ testF(ShellTest, cancelLine) {
     terminal.pressKey(0x15);   // CTRL('U')
     response = shell.executeIfInput();
     aLine = terminal.getline();
-    assertEqual(aLine, "XXX\r\n");
+    assertEqual(aLine, "XXX" END_LINE);
 
     const char* echoCmd = "echo aWord";
     terminal.pressKeys(echoCmd);
@@ -135,7 +138,7 @@ testF(ShellTest, cancelLine) {
     errNo = shell.lastErrNo();
     assertEqual(errNo, 0);    // OK or no errors
 
-    assertEqual(terminal.getline(), "\r\naWord\r\n");
+    assertEqual(terminal.getline(), END_LINE "aWord" COMMAND_PROMPT);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -154,7 +157,7 @@ testF(ShellTest, retypeLine) {
     terminal.pressKey(0x12);   // CTRL('R') retype line
     response = shell.executeIfInput();
     aLine = terminal.getline();
-    assertEqual(aLine, "\r\necho howdy doodie");
+    assertEqual(aLine, END_LINE "echo howdy doodie");
 
     terminal.pressKey('\r');
     response = shell.executeIfInput();
@@ -163,7 +166,7 @@ testF(ShellTest, retypeLine) {
     errNo = shell.lastErrNo();
     assertEqual(errNo, 0);    // OK or no errors
 
-    assertEqual(terminal.getline(), "\r\nhowdy doodie\r\n");
+    assertEqual(terminal.getline(), END_LINE "howdy doodie" COMMAND_PROMPT);
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -211,7 +214,7 @@ testF(ShellTest, backspace) {
     errNo = shell.lastErrNo();
     assertEqual(errNo, 0);    // OK or no errors
 
-    assertEqual(terminal.getline(), "\r\nhello world\r\n");
+    assertEqual(terminal.getline(), END_LINE "hello world" COMMAND_PROMPT);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -246,7 +249,7 @@ testF(ShellTest, delete) {
     errNo = shell.lastErrNo();
     assertEqual(errNo, 0);    // OK or no errors
 
-    assertEqual(terminal.getline(), "\r\nhello world\r\n");
+    assertEqual(terminal.getline(), END_LINE "hello world" COMMAND_PROMPT);
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -115,6 +115,7 @@ bool SimpleSerialShell::executeIfInput(void)
     if (bufferReady) {
         didSomething = true;
         execute();
+	print(F("> ")); // provide command prompt feedback
     }
 
     return didSomething;
