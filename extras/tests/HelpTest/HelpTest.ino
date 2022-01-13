@@ -18,6 +18,7 @@
 #define NEW_LINE "\r\n"
 #define HELP_PREAMBLE "Commands available are:"
 #define TWO_SPACE "  "
+#define COMMAND_PROMPT NEW_LINE ">  "
 
 // A mock of the Arduino Serial stream
 static SimulatedStream<128> terminal;
@@ -72,7 +73,7 @@ testF(ShellTest, helpTest)
         HELP_PREAMBLE NEW_LINE 
         TWO_SPACE "echo" NEW_LINE 
         TWO_SPACE "help" NEW_LINE 
-        TWO_SPACE "range <lower> <upper>" NEW_LINE));
+        TWO_SPACE "range <lower> <upper>" COMMAND_PROMPT));
 }
 
 //////////////////////////////////////////////////////////////////////////////
