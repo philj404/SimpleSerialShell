@@ -19,6 +19,7 @@ using namespace aunit;
 // some platforms ouput line endings differently.
 #define NEW_LINE "\r\n"
 //#define NEW_LINE "\n"
+#define COMMAND_PROMPT NEW_LINE "> "
 
 // A mock of the Arduino Serial stream
 static SimulatedStream<128> terminal;
@@ -90,7 +91,7 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Everything comes back as a single token
-    assertEqual(terminal.getline(),  (NEW_LINE "test1,test2,test3" NEW_LINE));
+    assertEqual(terminal.getline(),  (NEW_LINE "test1,test2,test3" COMMAND_PROMPT));
 
     // Now plug in a new tokenizer that looks for commas instead of spaces.
     // This is the main point of this unit test.
@@ -104,7 +105,7 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Notice now that the three tokens were separated
-    assertEqual(terminal.getline(),  (NEW_LINE "test1 test2 test3" NEW_LINE));
+    assertEqual(terminal.getline(),  (NEW_LINE "test1 test2 test3" COMMAND_PROMPT));
 }
 
 //////////////////////////////////////////////////////////////////////////////
