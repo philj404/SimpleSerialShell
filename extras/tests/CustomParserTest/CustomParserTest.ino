@@ -11,7 +11,7 @@
 
 // These tests depend on the Arduino "AUnit" library
 #include <AUnit.h>
-#include "../HelpTest/SimulatedStream.h"
+#include "SimulatedStream.h"
 #include <SimpleSerialShell.h>
 
 using namespace aunit;
@@ -33,7 +33,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellTest: public TestOnce {
+class ShellCustomParserTest: public TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -109,10 +109,21 @@ testF(ShellTest, altTokenizer) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ... so which sketch is this?
+int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
+{
+    Serial.println();
+    Serial.println(F( "Running " __FILE__ ", Built " __DATE__));
+    return 0;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
 void setup() {
     ::delay(1000); // wait for stability on some boards to prevent garbage Serial
     Serial.begin(115200); // ESP8266 default of 74880 not supported on Linux
     while (!Serial); // for the Arduino Leonardo/Micro only
+    showID();
 
     shell.addCommand(F("echo"), echo);
     shell.attach(terminal);

@@ -31,7 +31,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellTest: public aunit::TestOnce {
+class ShellHelpTest: public aunit::TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -51,10 +51,11 @@ int echo(int, char **)
 
 // Define a new command, keeping the documentation close by.
 
-const __FlashStringHelper * rangeCommandNameAndDocs = F("range <lower> <upper>");
+#define rangeCommandNameAndDocs F("range <lower> <upper>")
 
 int rangeCommand(int, char **) 
 {
+    // simulates setting range (lower, upper)
     return 0;
 }
 
@@ -77,10 +78,21 @@ testF(ShellTest, helpTest)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// ... so which sketch is this?
+int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
+{
+    Serial.println();
+    Serial.println(F( "Running " __FILE__ ", Built " __DATE__));
+    return 0;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
 void setup() {
     ::delay(1000); // wait for stability on some boards to prevent garbage Serial
     Serial.begin(115200); // ESP8266 default of 74880 not supported on Linux
     while (!Serial); // for the Arduino Leonardo/Micro only
+    showID();
 
     shell.addCommand(F("echo"), echo);
     shell.addCommand(rangeCommandNameAndDocs, rangeCommand);
