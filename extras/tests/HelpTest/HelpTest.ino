@@ -31,7 +31,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellHelpTest: public aunit::TestOnce {
+class HelpTest: public aunit::TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -62,7 +62,7 @@ int rangeCommand(int, char **)
 //////////////////////////////////////////////////////////////////////////////
 // The goal of this test is to validate that the help messages
 // return as expected.
-testF(ShellTest, helpTest) 
+testF(HelpTest, helpTest) 
 {
     const char* testCommand = "help\r";
     terminal.pressKeys(testCommand);

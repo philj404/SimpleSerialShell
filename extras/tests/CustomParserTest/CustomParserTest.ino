@@ -33,7 +33,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellCustomParserTest: public TestOnce {
+class CustomParserTest: public TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -79,7 +79,7 @@ char* commaTokenizer(char* str, const char*, char** saveptr) {
     }
 }
 
-testF(ShellTest, altTokenizer) {
+testF(CustomParserTest, altTokenizer) {
 
     const char* testCommand = "echo test1,test2,test3";
 
