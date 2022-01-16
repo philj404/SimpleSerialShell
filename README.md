@@ -1,4 +1,4 @@
-# SimpleSerialShell # [![Build Status](https://travis-ci.com/philj404/SimpleSerialShell.svg?branch=master)](https://travis-ci.com/philj404/SimpleSerialShell)
+# SimpleSerialShell # [![Build Status](https://travis-ci.com/philj404/SimpleSerialShell.svg?branch=main)](https://travis-ci.com/philj404/SimpleSerialShell)
 An extensible command shell for Arduino.
 
 This library provides a basic "command line interface" for your Arduino through its serial interface.  
@@ -74,7 +74,7 @@ A demonstration of this feature can be seen [here](examples/AlternateTokenizer).
 may make your device more user-friendly.  (For example, use `shell.addCommand(F("echo <wordsToEcho>..."), echoCommand);` )
 
 * RAM is limited in the ATMega world.  To save space, use the F() macro, which keeps const strings in flash
-rather than copying them to RAM.  (For example use `shell.addCommand(F("helloWorld"), hello);` )
+rather than copying them to RAM.  (For example use `shell.addCommand(F("sayHello"), helloWorld);` )
 
 * Since the shell delegates the actual communication to what it connects to
 (with shell.attach()), it can work with Serial, Serial2, SoftwareSerial or
@@ -85,7 +85,7 @@ sending command output to the shell
 (rather than straight to Serial for example).  For example I use `shell.println("motor is off");`
 
 * Please note that the list of commands is shared between instances
-of the SimpleSerialShell (via a static).  The fact that the addCommand() method
+of the SimpleSerialShell (via a static variable).  The fact that the addCommand() method
 is non-static can be slighly misleading in this regard.
 
 ### Notes
