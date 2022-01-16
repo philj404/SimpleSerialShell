@@ -18,6 +18,7 @@
 #define NEW_LINE "\r\n"
 #define HELP_PREAMBLE "Commands available are:"
 #define TWO_SPACE "  "
+#define COMMAND_PROMPT NEW_LINE "> "
 
 // A mock of the Arduino Serial stream
 static SimulatedStream<128> terminal;
@@ -30,7 +31,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellTest: public aunit::TestOnce {
+class HelpTest: public aunit::TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -50,17 +51,18 @@ int echo(int, char **)
 
 // Define a new command, keeping the documentation close by.
 
-const __FlashStringHelper * rangeCommandNameAndDocs = F("range <lower> <upper>");
+#define rangeCommandNameAndDocs F("range <lower> <upper>")
 
 int rangeCommand(int, char **) 
 {
+    // simulates setting range (lower, upper)
     return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 // The goal of this test is to validate that the help messages
 // return as expected.
-testF(ShellTest, helpTest) 
+testF(HelpTest, helpTest) 
 {
     const char* testCommand = "help\r";
     terminal.pressKeys(testCommand);
@@ -72,14 +74,25 @@ testF(ShellTest, helpTest)
         HELP_PREAMBLE NEW_LINE 
         TWO_SPACE "echo" NEW_LINE 
         TWO_SPACE "help" NEW_LINE 
-        TWO_SPACE "range <lower> <upper>" NEW_LINE));
+        TWO_SPACE "range <lower> <upper>" COMMAND_PROMPT));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// ... so which sketch is this?
+int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
+{
+    Serial.println();
+    Serial.println(F( "Running " __FILE__ ", Built " __DATE__));
+    return 0;
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 void setup() {
     ::delay(1000); // wait for stability on some boards to prevent garbage Serial
     Serial.begin(115200); // ESP8266 default of 74880 not supported on Linux
     while (!Serial); // for the Arduino Leonardo/Micro only
+    showID();
 
     shell.addCommand(F("echo"), echo);
     shell.addCommand(rangeCommandNameAndDocs, rangeCommand);

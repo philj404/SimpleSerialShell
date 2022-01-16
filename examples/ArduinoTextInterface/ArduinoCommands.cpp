@@ -255,18 +255,32 @@ int doNoTone(int argc, char **argv)
 }
 #endif
 
+#define WITH_HELPINFO
+#ifdef WITH_HELPINFO
+#define ADD_COMMAND(name, argumentHints, function)\
+	shell.addCommand(F(name " " argumentHints),function)
+#else
+    // if there is no room for a help hint,
+    // shorten the string to just the command
+#define ADD_COMMAND(name, argumentHints, function)\
+	shell.addCommand(F(name),function)
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 int addArduinoCommands(SimpleSerialShell & shell)
 {
-    shell.addCommand(F("setpinmode"), setPinMode);
-    shell.addCommand(F("digitalwrite"), digitalWrite);
-    shell.addCommand(F("digitalread"), digitalRead);
-    shell.addCommand(F("analogread"), analogRead);
+    //shell.addCommand(F("setpinmode" ), setPinMode);
+    //shell.addCommand(F("setpinmode pinNumber {input|output|pullup}"), setPinMode);
+    //
+    ADD_COMMAND("setpinmode", "pinNumber {input|output|pullup}", setPinMode);
+    ADD_COMMAND("digitalwrite", "pinNumber {low|high|0|1}", digitalWrite);
+    ADD_COMMAND("digitalread", "pinNumber", digitalRead);
+    ADD_COMMAND("analogread", "pinNumber", analogRead);
 
 #ifndef ARDUINO_ARCH_ESP32
-    shell.addCommand(F("analogwrite"), analogWrite);
-    shell.addCommand(F("tone"), doTone);
-    shell.addCommand(F("notone"), doNoTone);
+    ADD_COMMAND("analogwrite", "pinNumber value", analogWrite);
+    ADD_COMMAND("tone", "pinNumber freqHz [durationMillisec]", doTone);
+    ADD_COMMAND("notone", "pinNumber", doNoTone);
 #endif
 
     return EXIT_SUCCESS;

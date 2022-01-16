@@ -11,7 +11,7 @@
 
 // These tests depend on the Arduino "AUnit" library
 #include <AUnit.h>
-#include "../HelpTest/SimulatedStream.h"
+#include "SimulatedStream.h"
 #include <SimpleSerialShell.h>
 
 using namespace aunit;
@@ -19,6 +19,7 @@ using namespace aunit;
 // some platforms ouput line endings differently.
 #define NEW_LINE "\r\n"
 //#define NEW_LINE "\n"
+#define COMMAND_PROMPT NEW_LINE "> "
 
 // A mock of the Arduino Serial stream
 static SimulatedStream<128> terminal;
@@ -32,7 +33,7 @@ void prepForTests(void)
 //////////////////////////////////////////////////////////////////////////////
 // test fixture to ensure clean initial and final conditions
 //
-class ShellTest: public TestOnce {
+class CustomParserTest: public TestOnce {
     protected:
         void setup() override {
             TestOnce::setup();
@@ -78,7 +79,7 @@ char* commaTokenizer(char* str, const char*, char** saveptr) {
     }
 }
 
-testF(ShellTest, altTokenizer) {
+testF(CustomParserTest, altTokenizer) {
 
     const char* testCommand = "echo test1,test2,test3";
 
@@ -90,7 +91,7 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Everything comes back as a single token
-    assertEqual(terminal.getline(),  (NEW_LINE "test1,test2,test3" NEW_LINE));
+    assertEqual(terminal.getline(),  (NEW_LINE "test1,test2,test3" COMMAND_PROMPT));
 
     // Now plug in a new tokenizer that looks for commas instead of spaces.
     // This is the main point of this unit test.
@@ -104,14 +105,25 @@ testF(ShellTest, altTokenizer) {
     terminal.pressKey('\r');
     assertTrue(shell.executeIfInput());
     // Notice now that the three tokens were separated
-    assertEqual(terminal.getline(),  (NEW_LINE "test1 test2 test3" NEW_LINE));
+    assertEqual(terminal.getline(),  (NEW_LINE "test1 test2 test3" COMMAND_PROMPT));
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// ... so which sketch is this?
+int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
+{
+    Serial.println();
+    Serial.println(F( "Running " __FILE__ ", Built " __DATE__));
+    return 0;
+};
+
 
 //////////////////////////////////////////////////////////////////////////////
 void setup() {
     ::delay(1000); // wait for stability on some boards to prevent garbage Serial
     Serial.begin(115200); // ESP8266 default of 74880 not supported on Linux
     while (!Serial); // for the Arduino Leonardo/Micro only
+    showID();
 
     shell.addCommand(F("echo"), echo);
     shell.attach(terminal);

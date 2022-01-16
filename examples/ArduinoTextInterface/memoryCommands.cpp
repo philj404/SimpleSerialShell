@@ -128,9 +128,9 @@ int dumpAMemory(int argc, char **argv)
 int addMemoryCommands(SimpleSerialShell & shell)
 {
 #ifdef AVR
-    shell.addCommand(F("eeprom?"), dumpAMemory);
+    shell.addCommand(F("eeprom? [<beginHex> [<numBytesHex>]]"), dumpAMemory);
 #endif
-    shell.addCommand(F("ram?"), dumpAMemory);
-    shell.addCommand(F("progmem?"), dumpAMemory);
+    shell.addCommand(F("ram? [<beginHex> [<numBytesHex>]]"), dumpAMemory);
+    shell.addCommand(F("progmem? [<beginHex> [<numBytesHex>]]"), dumpAMemory);
     return 0;
 }

@@ -76,7 +76,12 @@ void setup() {
     shell.attach(Serial);
     shell.addCommand(F("id?"), showID);
 
-    shell.addCommand(F("setTogglePeriod"), setTogglePeriod);
+    //basic command
+    //shell.addCommand(F("setTogglePeriod"), setTogglePeriod);
+    // command with hint for help
+    shell.addCommand(F("setTogglePeriod <milliseconds>"), setTogglePeriod);
+
+
     shell.addCommand(F("getTogglePeriod"), getTogglePeriod);
 
     showID();
