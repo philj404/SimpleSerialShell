@@ -50,6 +50,8 @@ loop()
 ### Example Sketches
 * **AdjustableBlink**
 -- lets you read and vary the blink rate of a Blink sketch.
+* **AlternateTokenizer**
+-- Demonstrates an echo command that accepts quoted tokens that contain spaces.
 * **ArduinoTextInterface**
 -- lets you read and write digital and analog values to Arduino pins.  Basically wrappers for setPinMode(), digitalRead(), digitalWrite(), analogRead(), analogWrite(), etc.
 It's incomplete, but enough to set and clear bits one at a time and see if you have an LED connected to the right pin.
@@ -67,6 +69,9 @@ A demonstration of this feature can be seen [here](examples/AlternateTokenizer).
 ### Tips
 
 * "help" is a built-in command.  It lists what is available.
+
+* If memory limitations allow, provide additional documentation for each command you register following a colon delimeter in the addCommand() method.  This will make the "help" output more comprehensive and
+may make your device more user-friendly.  (For example, use `shell.addCommand(F("helloWorld:<start> [<end>]"), hello);` )
 
 * RAM is limited in the ATMega world.  To save space, use the F() macro, which keeps const strings in flash
 rather than copying them to RAM.  (For example use `shell.addCommand(F("helloWorld"), hello);` )
