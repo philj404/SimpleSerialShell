@@ -1,8 +1,11 @@
 Release notes
 
+### v0.9.1
+* Ensure shell is a Singleton
+
 ### v0.9.0
 * Support argument hints when adding commands (for "help" command) (brucemack)
-* Add "> " command prompt to show shell is alive
+* Add "> " command prompt to show shell is alive (MAY BREAK TESTS of text output)
 * Unit tests build/run/PASS with Windows/Arduino IDE + Arduino Nano
 
 ### v0.2.3

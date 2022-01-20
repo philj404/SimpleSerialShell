@@ -9,7 +9,13 @@
  *
  */
 
-SimpleSerialShell shell;
+// The static instance of the singleton 
+SimpleSerialShell SimpleSerialShell::theShell;
+
+// A reference to the singleton shell in the global namespace. There is an 
+// extern definition of this in SimpleSherialShell.h, so all users of the 
+// class will have visibilty to this reference.  
+SimpleSerialShell& shell = SimpleSerialShell::theShell;
 
 //
 SimpleSerialShell::Command * SimpleSerialShell::firstCommand = NULL;

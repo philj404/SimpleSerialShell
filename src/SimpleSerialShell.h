@@ -19,7 +19,9 @@
  */
 class SimpleSerialShell : public Stream {
     public:
-        SimpleSerialShell(void);
+
+        // The singleton instance of the shell
+        static SimpleSerialShell theShell;
 
         // Unix-style (from 1970!)
         // functions must have a signature like: "int hello(int argc, char ** argv)"
@@ -81,6 +83,9 @@ class SimpleSerialShell : public Stream {
         void setTokenizer(TokenizerFunction f);
 
     private:
+
+        SimpleSerialShell(void);
+
         Stream * shellConnection;
         int m_lastErrNo;
         int execute(void);
@@ -100,7 +105,7 @@ class SimpleSerialShell : public Stream {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-extern SimpleSerialShell shell;
+extern SimpleSerialShell& shell;
 
 //example commands which would be easy to add to the shell:
 //extern int helloWorld(int argc, char **argv);
