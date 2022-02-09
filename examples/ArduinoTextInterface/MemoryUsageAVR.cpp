@@ -15,9 +15,20 @@ int MU_AVR::maxStackSize = getStackSize();
 int MU_AVR::numStackComputeCalls = 0;
 
 // print 1, 2 or 3 items on a line
-#define PRINT1(a) shell.println((a));
-#define PRINT2(a,b) shell.print((a)); shell.println((b));
-#define PRINT3(a,b,c) shell.print((a)); shell.print((b)); shell.println((c));
+void PRINT (const __FlashStringHelper *a, int b = -1, const __FlashStringHelper * c = NULL)
+{
+    shell.print(a);
+    if (b != -1) {
+        shell.print(b);
+        shell.print(F(" (0x"));
+        shell.print(b,HEX);
+        shell.print(F(")"));
+        if (c) {
+            shell.print(c);
+        }
+    }
+    shell.println();
+}
 
 /// Modified function from http://www.avr-developers.com/mm/memoryusage.html
 void MU_AVR::SRamDisplay(void)
@@ -32,23 +43,23 @@ void MU_AVR::SRamDisplay(void)
 
     available	-=	data_size + bss_size + heap_size + stack_size;
 
-    PRINT3( F( "+----------------+ " ),        getDataStart(),   F(" (__data_start)"));
-    PRINT1( F( "+      data      +" ));
-    PRINT2( F( "+    variables   + size = " ), data_size);
-    PRINT3( F( "+----------------+ " ),        (int)&__data_end, F(" (__data_end / __bss_start)"));
-    PRINT1( F( "+      bss       +" ));
-    PRINT2( F( "+    variables   + size = " ), bss_size);
-    PRINT3( F( "+----------------+ " ),        (int)&__bss_end,  F(" (__bss_end / __heap_start)"));
-    PRINT2( F( "+      heap      + size = " ), heap_size);
-    PRINT3( F( "+----------------+ " ),        (int)heap_end,    F(" (__brkval if not 0, or __heap_start)"));
-    PRINT1( F( "+                +" ));
-    PRINT1( F( "+                +" ));
-    PRINT2( F( "+   FREE RAM     + size = " ), available);
-    PRINT1( F( "+                +" ));
-    PRINT1( F( "+                +" ));
-    PRINT3( F( "+----------------+ " ),        (int)SP,           F(" (SP)"));
-    PRINT2( F( "+     stack      + size = " ), stack_size);
-    PRINT3( F( "+----------------+ " ),        (int)RAMEND,       F(" (RAMEND / __stack)"));
+    PRINT( F( "+----------------+ " ),        getDataStart(),   F(" (__data_start)"));
+    PRINT( F( "+      data      +" ));
+    PRINT( F( "+    variables   + size = " ), data_size);
+    PRINT( F( "+----------------+ " ),        (int)&__data_end, F(" (__data_end / __bss_start)"));
+    PRINT( F( "+      bss       +" ));
+    PRINT( F( "+    variables   + size = " ), bss_size);
+    PRINT( F( "+----------------+ " ),        (int)&__bss_end,  F(" (__bss_end / __heap_start)"));
+    PRINT( F( "+      heap      + size = " ), heap_size);
+    PRINT( F( "+----------------+ " ),        (int)heap_end,    F(" (__brkval if not 0, or __heap_start)"));
+    PRINT( F( "+                +" ));
+    PRINT( F( "+                +" ));
+    PRINT( F( "+   FREE RAM     + size = " ), available);
+    PRINT( F( "+                +" ));
+    PRINT( F( "+                +" ));
+    PRINT( F( "+----------------+ " ),        (int)SP,           F(" (SP)"));
+    PRINT( F( "+     stack      + size = " ), stack_size);
+    PRINT( F( "+----------------+ " ),        (int)RAMEND,       F(" (RAMEND / __stack)"));
     shell.println();
     shell.println();
 }
