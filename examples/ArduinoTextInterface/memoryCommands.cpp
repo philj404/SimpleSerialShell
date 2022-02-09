@@ -55,7 +55,7 @@ void prettyPrintChars(int lineNo, const char *chars, int numChars)
         unsigned char b = chars[j];
         shell.print(F(" "));
         if(b < 0x10) {
-            shell.print(F(" "));
+            shell.print(F("0"));
         }
         shell.print(b, HEX);
     }
