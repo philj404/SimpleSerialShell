@@ -52,12 +52,11 @@ class SimpleSerialShell::Command {
             // strncasecmp_P.  That will take a bit of research since 
             // the header file may have a different name on ESP2886/ESP32.
             String work(nameAndDocs);
-            int compareLength = SIMPLE_SERIAL_SHELL_BUFSIZE;
             int delim = work.indexOf(' ');
-            if (delim >=0) {
-                compareLength = delim;
-            }
-            return strncasecmp(work.c_str(), aName, compareLength);
+            if (delim >= 0) {
+                work.remove(delim);
+            }            
+            return strncasecmp(work.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
         };
 
         /**

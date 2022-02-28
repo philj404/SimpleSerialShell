@@ -78,6 +78,51 @@ testF(HelpTest, helpTest)
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// The goal of this test is to check a bug (#28) that was introduced when using 
+// a command that starts off with another.  
+testF(HelpTest, helpTest2) 
+{
+    // Notice that this command text is a superset of the "range" command
+    terminal.pressKeys("ranger 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),  
+        ("ranger 1 2" NEW_LINE 
+        "\"ranger\": -1: command not found"
+        COMMAND_PROMPT));
+
+    // Notice that this command text is a subset of the "range" command
+    terminal.pressKeys("rang 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),  
+        ("rang 1 2" NEW_LINE 
+        "\"rang\": -1: command not found"
+        COMMAND_PROMPT));
+
+    // Now check the normal command
+    terminal.pressKeys("range 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),  
+        ("range 1 2"
+        COMMAND_PROMPT));
+
+    // Now check the normal command, except show that the comparison is 
+    // case-insensitive (per original implementation)
+    terminal.pressKeys("Range 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),  
+        ("Range 1 2"
+        COMMAND_PROMPT));
+}
+
+//////////////////////////////////////////////////////////////////////////////
 // ... so which sketch is this?
 int showID(int /*argc*/ = 0, char ** /*argv*/ = NULL)
 {
