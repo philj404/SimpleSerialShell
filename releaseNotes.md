@@ -1,5 +1,9 @@
 Release notes
 
+### v0.9.2
+* #28 bug - use full command name (no partial matches)
+* added example memory dump commands
+
 ### v0.9.1
 * Ensure shell is a Singleton
 

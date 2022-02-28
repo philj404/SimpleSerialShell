@@ -4,7 +4,7 @@
 
 Try and adhere to the [kernel coding style](https://www.kernel.org/doc/html/latest/process/coding-style.html) with the exception of using 4 spaces instead of 8 for indentation.
 
-The "astyle" code formatter and the library's ```formatter.conf``` configuration file do a pretty good job of correcting indentation, removing tabs etc.
+The "astyle" code formatter and the library's ```formatter.conf``` configuration file do a pretty good job of correcting indentation, removing tabs etc.  ("astyle" is the formatter the Arduino IDE uses when you select "Tools...Auto format".)
 
 ## Reporting Bugs
 
