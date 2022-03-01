@@ -6,6 +6,8 @@ Try and adhere to the [kernel coding style](https://www.kernel.org/doc/html/late
 
 The "astyle" code formatter and the library's ```formatter.conf``` configuration file do a pretty good job of correcting indentation, removing tabs etc.  ("astyle" is the formatter the Arduino IDE uses when you select "Tools...Auto format".)
 
+Tip: ```git diff --check``` will check your files and flag lines with trailing whitespace, and flag lines with tabs following spaces.
+
 ## Reporting Bugs
 
 Open an issue. Please include as much code / logging / output / information as
