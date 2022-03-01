@@ -9,12 +9,12 @@
  *
  */
 
-// The static instance of the singleton 
+// The static instance of the singleton
 SimpleSerialShell SimpleSerialShell::theShell;
 
-// A reference to the singleton shell in the global namespace. There is an 
-// extern definition of this in SimpleSherialShell.h, so all users of the 
-// class will have visibilty to this reference.  
+// A reference to the singleton shell in the global namespace. There is an
+// extern definition of this in SimpleSherialShell.h, so all users of the
+// class will have visibilty to this reference.
 SimpleSerialShell& shell = SimpleSerialShell::theShell;
 
 //
@@ -42,26 +42,26 @@ class SimpleSerialShell::Command {
         };
 
         int compareName(const char * aName) const
-        {   
-            // Look for the command delimiter and make sure we don't 
+        {
+            // Look for the command delimiter and make sure we don't
             // consider anything beyond it in the comparison.  There
             // may be more documentation in the string.
             //
             // Note for future consideration: The temporary String here could
-            // be eliminated here by leveraging strlen_P, pgm_read_byte, and 
-            // strncasecmp_P.  That will take a bit of research since 
+            // be eliminated here by leveraging strlen_P, pgm_read_byte, and
+            // strncasecmp_P.  That will take a bit of research since
             // the header file may have a different name on ESP2886/ESP32.
             String work(nameAndDocs);
             int delim = work.indexOf(' ');
             if (delim >= 0) {
                 work.remove(delim);
-            }            
+            }
             return strncasecmp(work.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
         };
 
         /**
          * @brief Writes the documentation associated with this command.
-         * 
+         *
          * @param str Stream to write into.
          */
         void renderDocumentation(Stream& str) const
@@ -340,7 +340,7 @@ void SimpleSerialShell::flush()
         shellConnection->flush();
 }
 
-void SimpleSerialShell::setTokenizer(TokenizerFunction f) 
+void SimpleSerialShell::setTokenizer(TokenizerFunction f)
 {
     tokenizer = f;
 }
