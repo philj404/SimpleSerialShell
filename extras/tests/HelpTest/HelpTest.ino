@@ -44,7 +44,7 @@ class HelpTest: public aunit::TestOnce {
         }
 };
 
-int echo(int, char **) 
+int echo(int, char **)
 {
     return 0;
 }
@@ -53,7 +53,7 @@ int echo(int, char **)
 
 #define rangeCommandNameAndDocs F("range <lower> <upper>")
 
-int rangeCommand(int, char **) 
+int rangeCommand(int, char **)
 {
     // simulates setting range (lower, upper)
     return 0;
@@ -62,19 +62,64 @@ int rangeCommand(int, char **)
 //////////////////////////////////////////////////////////////////////////////
 // The goal of this test is to validate that the help messages
 // return as expected.
-testF(HelpTest, helpTest) 
+testF(HelpTest, helpTest)
 {
     const char* testCommand = "help\r";
     terminal.pressKeys(testCommand);
     assertTrue(shell.executeIfInput());
 
     // The begining part of the response is the echo of the user's input.
-    assertEqual(terminal.getline(),  
-        ("help" NEW_LINE 
-        HELP_PREAMBLE NEW_LINE 
-        TWO_SPACE "echo" NEW_LINE 
-        TWO_SPACE "help" NEW_LINE 
+    assertEqual(terminal.getline(),
+        ("help" NEW_LINE
+        HELP_PREAMBLE NEW_LINE
+        TWO_SPACE "echo" NEW_LINE
+        TWO_SPACE "help" NEW_LINE
         TWO_SPACE "range <lower> <upper>" COMMAND_PROMPT));
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// The goal of this test is to check a bug (#28) that was introduced when using
+// a command that starts off with another.
+testF(HelpTest, helpTest2)
+{
+    // Notice that this command text is a superset of the "range" command
+    terminal.pressKeys("ranger 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),
+        ("ranger 1 2" NEW_LINE
+        "\"ranger\": -1: command not found"
+        COMMAND_PROMPT));
+
+    // Notice that this command text is a subset of the "range" command
+    terminal.pressKeys("rang 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),
+        ("rang 1 2" NEW_LINE
+        "\"rang\": -1: command not found"
+        COMMAND_PROMPT));
+
+    // Now check the normal command
+    terminal.pressKeys("range 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),
+        ("range 1 2"
+        COMMAND_PROMPT));
+
+    // Now check the normal command, except show that the comparison is
+    // case-insensitive (per original implementation)
+    terminal.pressKeys("Range 1 2\r");
+    assertTrue(shell.executeIfInput());
+
+    // The begining part of the response is the echo of the user's input.
+    assertEqual(terminal.getline(),
+        ("Range 1 2"
+        COMMAND_PROMPT));
 }
 
 //////////////////////////////////////////////////////////////////////////////
