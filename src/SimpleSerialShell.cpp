@@ -95,8 +95,10 @@ SimpleSerialShell::SimpleSerialShell()
       m_lastErrNo(EXIT_SUCCESS),
       tokenizer(strtok_r)
 {
-    resetBuffer();
+    // welcomeMessage =  (const __FlashStringHelper * ) const F("Welcome to SimpleSerialShell");
 
+    resetBuffer();
+    
     // simple help.
     addCommand(F("help"), SimpleSerialShell::printHelp);
 };
@@ -130,7 +132,7 @@ bool SimpleSerialShell::executeIfInput(void)
     if (bufferReady) {
         didSomething = true;
         execute();
-	print(F("> ")); // provide command prompt feedback
+	    print(F("> ")); // provide command prompt feedback
     }
 
     return didSomething;
@@ -140,6 +142,11 @@ bool SimpleSerialShell::executeIfInput(void)
 void SimpleSerialShell::attach(Stream & requester)
 {
     shellConnection = &requester;
+
+    //Welcome message
+    shell.println(String(welcomeMessage));
+    
+    shell.print(F("> "));
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -353,4 +360,9 @@ void SimpleSerialShell::flush()
 void SimpleSerialShell::setTokenizer(TokenizerFunction f)
 {
     tokenizer = f;
+}
+
+void SimpleSerialShell::setWelcomeMessage(const __FlashStringHelper * message)
+{
+    welcomeMessage = message;
 }

@@ -82,9 +82,13 @@ class SimpleSerialShell : public Stream {
         // optional.
         void setTokenizer(TokenizerFunction f);
 
+        void setWelcomeMessage(const __FlashStringHelper * message);
+
     private:
 
         SimpleSerialShell(void);
+
+        const __FlashStringHelper * welcomeMessage = F("Welcome to SimpleSerialShell");;
 
         Stream * shellConnection;
         int m_lastErrNo;
