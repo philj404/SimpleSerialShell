@@ -37,8 +37,7 @@ class SimpleSerialShell::Command {
         // Comparison used for sort commands
         int compare(const Command * other) const
         {
-            const String otherNameString(other->nameAndDocs);
-            return compareName(otherNameString.c_str());
+            return compareName((const char*)other->nameAndDocs);
         };
 
         int compareName(const char * aName) const
@@ -51,12 +50,23 @@ class SimpleSerialShell::Command {
             // be eliminated here by leveraging strlen_P, pgm_read_byte, and
             // strncasecmp_P.  That will take a bit of research since
             // the header file may have a different name on ESP2886/ESP32.
-            String work(nameAndDocs);
-            int delim = work.indexOf(' ');
-            if (delim >= 0) {
-                work.remove(delim);
+
+            size_t addr = (size_t)nameAndDocs;
+            
+            uint8_t len = strlen_P((const char*)nameAndDocs);
+
+            char work[len];
+            for(int i = 0  ; i < len + 1; i++)
+            {
+                work[i] = (char)pgm_read_byte(addr+i);
+                if(isWhitespace(work[i])){
+                    work[i] = '\0';
+                    break;
+                }
             }
-            return strncasecmp(work.c_str(), aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
+
+            return strncasecmp_P(work, aName, SIMPLE_SERIAL_SHELL_BUFSIZE);
+
         };
 
         /**
@@ -275,7 +285,7 @@ int SimpleSerialShell::report(const __FlashStringHelper * constMsg, int errorCod
 {
     if (errorCode != EXIT_SUCCESS)
     {
-        String message(constMsg);
+        const char * message = (const char *) constMsg;
         print(errorCode);
         if (message[0] != '\0') {
             print(F(": "));
