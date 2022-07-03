@@ -88,7 +88,7 @@ class SimpleSerialShell : public Stream {
 
         SimpleSerialShell(void);
 
-        const __FlashStringHelper * welcomeMessage = F("Welcome to SimpleSerialShell");;
+        const __FlashStringHelper * welcomeMessage;
 
         Stream * shellConnection;
         int m_lastErrNo;

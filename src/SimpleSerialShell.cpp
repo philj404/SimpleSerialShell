@@ -83,6 +83,7 @@ class SimpleSerialShell::Command {
 SimpleSerialShell::SimpleSerialShell()
     : shellConnection(NULL),
       m_lastErrNo(EXIT_SUCCESS),
+      welcomeMessage(F("Welcome to SimpleSerialShell")),
       tokenizer(strtok_r)
 {
     // welcomeMessage =  (const __FlashStringHelper * ) const F("Welcome to SimpleSerialShell");
