@@ -158,20 +158,20 @@ bool SimpleSerialShell::prepInput(void)
             case '\b':  // CTRL(H) backspace
                 // Destructive backspace: remove last character
                 if (inptr > 0) {
-                    print("\b \b");  // remove char in raw UI
+                    print(F("\b \b"));  // remove char in raw UI
                     linebuffer[--inptr] = 0;
                 }
                 break;
 
             case 0x12: //CTRL('R')
                 //Ctrl-R retypes the line
-                print("\r\n");
+                print(F("\r\n"));
                 print(linebuffer);
                 break;
 
             case 0x15: //CTRL('U')
                 //Ctrl-U deletes the entire line and starts over.
-                println("XXX");
+                println(F("XXX"));
                 resetBuffer();
                 break;
 
@@ -220,7 +220,7 @@ int SimpleSerialShell::execute(void)
     int argc = 0;
 
     char * rest = NULL;
-    const char * whitespace = " \t\r\n";
+    const char * whitespace = " \t\r\n"; // not PROGMEM/simple TokenizerFunction
     char * commandName = tokenizer(linebuffer, whitespace, &rest);
 
     if (!commandName)
