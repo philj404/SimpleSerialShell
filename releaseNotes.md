@@ -1,5 +1,9 @@
 Release notes
 
+### v1.0.0
+* save another ~8 bytes RAM for ATmega processors
+* declare a stable 1.0 release
+
 ### v0.9.2
 * #28 bug - use full command name (no partial matches)
 * added example memory dump commands
