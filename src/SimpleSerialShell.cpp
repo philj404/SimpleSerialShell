@@ -85,12 +85,25 @@ SimpleSerialShell::SimpleSerialShell()
       m_lastErrNo(EXIT_SUCCESS),
       tokenizer(strtok_r)
 {
+	maxArgs = MAXARGS;
     resetBuffer();
 
     // simple help.
     addCommand(F("help"), SimpleSerialShell::printHelp);
 };
 
+//////////////////////////////////////////////////////////////////////////////
+void SimpleSerialShell::setMaxArgs(char ma)
+{
+	maxArgs = ma;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+char SimpleSerialShell::getMaxArgs()
+{
+	return maxArgs;
+}
+	
 //////////////////////////////////////////////////////////////////////////////
 void SimpleSerialShell::addCommand(
     const __FlashStringHelper * name, CommandFunction f)
@@ -215,7 +228,7 @@ int SimpleSerialShell::execute(const char commandString[])
 //////////////////////////////////////////////////////////////////////////////
 int SimpleSerialShell::execute(void)
 {
-    char * argv[MAXARGS] = {0};
+    char * argv[maxArgs] = {0};
     linebuffer[SIMPLE_SERIAL_SHELL_BUFSIZE - 1] = '\0'; // play it safe
     int argc = 0;
 
@@ -232,7 +245,7 @@ int SimpleSerialShell::execute(void)
     }
     argv[argc++] = commandName;
 
-    for ( ; argc < MAXARGS; )
+    for ( ; argc < maxArgs; )
     {
         char * anArg = tokenizer(0, whitespace, &rest);
         if (anArg) {

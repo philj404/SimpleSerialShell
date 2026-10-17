@@ -82,6 +82,11 @@ class SimpleSerialShell : public Stream {
         // optional.
         void setTokenizer(TokenizerFunction f);
 
+		// Sets the maximum number of arguments for commands
+		void setMaxArgs(char ma);
+		// Gets the maximum number of arguments for commands
+		char getMaxArgs();
+		
     private:
 
         SimpleSerialShell(void);
@@ -95,6 +100,7 @@ class SimpleSerialShell : public Stream {
 
         int report(const __FlashStringHelper * message, int errorCode);
         static const char MAXARGS = 10;
+		char maxArgs;
         char linebuffer[SIMPLE_SERIAL_SHELL_BUFSIZE];
         int inptr;
 
